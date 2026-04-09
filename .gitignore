@@ -5,7 +5,7 @@ venv/
 *.egg-info/
 dist/
 build/
-outputs/
+/outputs/
 memory/
 *.xlsx
 explicacao_tir.py
