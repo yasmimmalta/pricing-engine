@@ -1,13 +1,13 @@
 credentials:
   usernames:
-    yasmim:
-      email: yasmim@allu.com.br
+    yasmim.malta@allugator.com:
+      email: yasmim.malta@allugator.com
       name: Yasmim Malta
-      password: $2b$12$Zs8mYIUdg0zFZm62VRx6luw1DiyupxCqVd8F1//1PWgr1lS5q1b56
-    admin:
-      email: admin@allu.com.br
+      password: $2b$12$ozqGx4sW19IoPqx.liJiQec/LwaJbQBJOAcyTssqm/yOVCA64/gqm
+    admin@allugator.com:
+      email: admin@allugator.com
       name: Admin Allu
-      password: $2b$12$K04CsALwu/Vm2mfNjPRJ/OM4O0h1lBazvNRysKe1TawgL8yzG1kEW
+      password: $2b$12$uvOFbl2M4/ihxXxkAwKJDe.YYQvFhoGnXb76vjCMziaRUjOMPKe1e
 
 cookie:
   expiry_days: 30
@@ -16,5 +16,5 @@ cookie:
 
 pre-authorized:
   emails:
-    - yasmim@allu.com.br
-    - admin@allu.com.br
+    - yasmim.malta@allugator.com
+    - admin@allugator.com
