@@ -1,0 +1,32 @@
+{
+  "iphone": {
+    "dep_method": "exponential",
+    "annual_rate": 0.27,
+    "floor_pct": 0.30,
+    "description": "iPhone — curva exponencial 27% a.a. Retém ~73% após 12m, ~53% após 24m, ~39% após 36m. Floor de segurança: 30%."
+  },
+  "macbook": {
+    "dep_method": "linear",
+    "annual_rate": 0.20,
+    "floor_pct": 0.30,
+    "description": "MacBook — depreciação linear 20% a.a. (1,667%/mês), floor 30%"
+  },
+  "console": {
+    "dep_method": "linear",
+    "annual_rate": 0.20,
+    "floor_pct": 0.15,
+    "description": "Console — depreciação linear 20% a.a. (1,667%/mês), floor 15%"
+  },
+  "apple_watch": {
+    "dep_method": "linear",
+    "annual_rate": 0.20,
+    "floor_pct": 0.15,
+    "description": "Apple Watch — depreciação linear 20% a.a. (1,667%/mês), floor 15%"
+  },
+  "default": {
+    "dep_method": "linear",
+    "annual_rate": 0.20,
+    "floor_pct": 0.20,
+    "description": "Padrão — depreciação linear 20% a.a. (1,667%/mês), floor 20%"
+  }
+}

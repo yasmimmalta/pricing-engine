@@ -1,0 +1,20 @@
+credentials:
+  usernames:
+    yasmim:
+      email: yasmim@allu.com.br
+      name: Yasmim Malta
+      password: $2b$12$Zs8mYIUdg0zFZm62VRx6luw1DiyupxCqVd8F1//1PWgr1lS5q1b56
+    admin:
+      email: admin@allu.com.br
+      name: Admin Allu
+      password: $2b$12$K04CsALwu/Vm2mfNjPRJ/OM4O0h1lBazvNRysKe1TawgL8yzG1kEW
+
+cookie:
+  expiry_days: 30
+  key: allu_pricing_engine_secret_key_2026
+  name: allu_pricing_auth
+
+pre-authorized:
+  emails:
+    - yasmim@allu.com.br
+    - admin@allu.com.br

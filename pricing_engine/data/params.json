@@ -1,0 +1,26 @@
+{
+  "_comentario": "Parâmetros padrão da Allu Pricing Engine. Mantenha sincronizado com settings.py.",
+  "_versao": "1.0.0",
+  "_referencia": "Documentação interna Allu — Modelo de Precificação 2025/2026",
+
+  "icms_pct": 0.14,
+  "funding_captacao_pct": 0.04,
+  "debt_annual_rate": 0.2372,
+  "pis_cofins_pct": 0.0925,
+  "pis_cofins_credit_pct": 0.0925,
+  "iss_pct": 0.025,
+  "mdr_pct": 0.02,
+
+  "cac_venda_pct": 0.10,
+  "prep_venda": 0.02,
+  "logistics_venda": 40.0,
+  "logistics_assinatura": 50.0,
+  "logistics_at_pct": 0.0142,
+  "risk_query_value": 15.0,
+  "customer_benefits": 20.0,
+
+  "pdd_pct": 0.08,
+  "default_pct": 0.005,
+
+  "min_unlevered_irr": 0.15
+}

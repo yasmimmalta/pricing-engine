@@ -1,0 +1,9 @@
+id;name;category;market_price;purchase_price;maintenance_annual_pct;condicao
+ip17_256;iPhone 17 256GB;iphone;7999;5885;0.1122;novo
+ip17pro_256;iPhone 17 Pro 256GB;iphone;10499;8199;0.1122;novo
+ip17promax_256;iPhone 17 Pro Max 256GB;iphone;11499;8599;0.1122;novo
+ip16_128;iPhone 16 128GB;iphone;5499;4299;0.1122;usado
+ip16_256;iPhone 16 256GB;iphone;5999;5149;0.1122;usado
+mba_m3_256;MacBook Air M4 256GB;macbook;10999;8399;0.075;novo
+mbp_m3_512;MacBook Pro M5 512GB;macbook;16999;12299;0.075;novo
+Ideapad_I5;Lenovo IdeaPad Slim 3 I5;notebook_windows;4665;4199;0.085;novo

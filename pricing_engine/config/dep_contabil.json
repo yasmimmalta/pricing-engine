@@ -1,0 +1,34 @@
+{
+  "_doc": {
+    "descricao": "Taxas de depreciacao contabil anual por categoria de device.",
+    "uso": "Base de calculo: purchase_price liquido de ICMS (sem imposto). Taxa: 10% a.a. linear.",
+    "finalidade_atual": "Valor liquido contabil usado no calculo de default mensal (M12).",
+    "finalidade_futura": "Alimentar a DRE dos ativos (despesa de depreciacao contabil por mes).",
+    "separacao": "Nao confundir com dep_venda.json, que e a curva de mercado para valor de venda (M4/M5).",
+    "formula": "dep_contabil_mensal = purchase_price * annual_rate / 12"
+  },
+  "iphone": {
+    "annual_rate": 0.10,
+    "description": "iPhone — depreciacao contabil linear 10% a.a. sobre purchase_price (sem ICMS)"
+  },
+  "macbook": {
+    "annual_rate": 0.10,
+    "description": "MacBook — depreciacao contabil linear 10% a.a. sobre purchase_price (sem ICMS)"
+  },
+  "console": {
+    "annual_rate": 0.10,
+    "description": "Console — depreciacao contabil linear 10% a.a. sobre purchase_price (sem ICMS)"
+  },
+  "apple_watch": {
+    "annual_rate": 0.10,
+    "description": "Apple Watch — depreciacao contabil linear 10% a.a. sobre purchase_price (sem ICMS)"
+  },
+  "notebook_windows": {
+    "annual_rate": 0.10,
+    "description": "Notebook Windows — depreciacao contabil linear 10% a.a. sobre purchase_price (sem ICMS)"
+  },
+  "default": {
+    "annual_rate": 0.10,
+    "description": "Padrao — depreciacao contabil linear 10% a.a. sobre purchase_price (sem ICMS)"
+  }
+}

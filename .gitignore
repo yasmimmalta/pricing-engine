@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+outputs/
+memory/
+*.xlsx
+explicacao_tir.py
+gerar_excel.py
+.claude/

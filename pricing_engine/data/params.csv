@@ -1,0 +1,21 @@
+parametro;valor;descricao;unidade
+icms_pct;0.14;ICMS sobre compra do ativo;%
+funding_captacao_pct;0.02;Custo de captacao sobre funding (upfront);%
+debt_annual_rate;0.2372;Juros da divida ao ano (compostos);% a.a.
+pis_cofins_pct;0.0925;PIS + COFINS sobre receita (PIS 1.65% + COFINS 7.60%);%
+pis_cofins_credit_pct;0.0925;Credito PIS/COFINS sobre compra do ativo;%
+iss_pct;0.025;ISS sobre receita;%
+mdr_pct;0.02;MDR adquirancia sobre receita;%
+cac_venda_pct;0.10;Comissao de venda do device usado (sobre valor de venda);%
+prep_venda;0.02;Custo de preparacao/refurb para venda;%
+logistics_venda;85.0;Logistica de saida do device;R$
+logistics_assinatura;85.0;Logistica de entrega ao assinante;R$
+logistics_at_pct;0.07;Logistica AT provisao de logistica para troca por estrago;%
+risk_query_value;32.0;Consulta de credito/risco (B2C only);R$
+customer_benefits;67.0;Beneficios ao cliente (pontual: mes 1 e inicio renovacao);R$
+pdd_pct;0.08;Provisao de devedores duvidosos (sobre mensalidade);%
+default_pct;0.03;Default esperado (sobre valor do ativo por mes);% a.a.
+min_unlevered_irr;0.30;TIR desalavancada minima desejada;% a.a.
+dep_contabil_pct;0.10;Taxa de depreciacao contabil anual usada no calculo de default (fallback universal quando categoria nao encontrada em dep_contabil.json);% a.a.
+ir_csll_pct;0.238;Aliquota de IR + CSLL sobre o lucro (EBT) incide quando EBT > 0;%
+prazo_divida_meses;30;Prazo medio da divida em meses (juros ate mes N amortizacao no mes N+1);meses

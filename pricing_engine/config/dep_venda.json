@@ -1,0 +1,44 @@
+{
+  "_doc": {
+    "descricao": "Curvas de depreciacao economica/comercial por categoria de device.",
+    "uso": "Usada EXCLUSIVAMENTE para calcular o valor de venda final do ativo (M5). NAO usada para default.",
+    "metodos": "exponential (iPhone) — declining balance; linear/stepped (demais) — checkpoints 12/24/36/48m",
+    "separacao": "Este arquivo trata apenas de valor de mercado/revenda. Para depreciacao contabil, ver dep_contabil.json."
+  },
+  "iphone": {
+    "dep_method": "exponential",
+    "annual_rate": 0.27,
+    "floor_pct": 0.30,
+    "description": "iPhone — curva exponencial 27% a.a. Reten ~73% apos 12m, ~53% apos 24m, ~39% apos 36m. Floor: 30%."
+  },
+  "macbook": {
+    "dep_method": "exponential",
+    "annual_rate": 0.27,
+    "floor_pct": 0.25,
+    "description": "MacBook — curva exponencial 27% a.a. Floor: 25%."
+  },
+  "notebook_windows": {
+    "dep_method": "exponential",
+    "annual_rate": 0.33,
+    "floor_pct": 0.15,
+    "description": "Notebook Windows — curva exponencial 33% a.a. Floor: 15%."
+  },
+  "console": {
+    "dep_method": "linear",
+    "annual_rate": 0.20,
+    "floor_pct": 0.15,
+    "description": "Console — curva stepped: 80%/70%/60%/50% nos checkpoints 12/24/36/48m. Floor: 15%."
+  },
+  "apple_watch": {
+    "dep_method": "linear",
+    "annual_rate": 0.20,
+    "floor_pct": 0.15,
+    "description": "Apple Watch — curva stepped: 80%/70%/60%/50% nos checkpoints 12/24/36/48m. Floor: 15%."
+  },
+  "default": {
+    "dep_method": "linear",
+    "annual_rate": 0.20,
+    "floor_pct": 0.20,
+    "description": "Padrao — curva stepped: 80%/70%/60%/50% nos checkpoints 12/24/36/48m. Floor: 20%."
+  }
+}
