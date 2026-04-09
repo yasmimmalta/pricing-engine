@@ -276,8 +276,8 @@ st.markdown(
     <style>
     /* Variáveis de cor */
     :root {
-        --allu-azul: #1B5E20;
-        --allu-azul-claro: #2E7D32;
+        --allu-azul: #304D3C;
+        --allu-azul-claro: #3D6B4F;
         --allu-verde: #43A047;
         --allu-vermelho: #E74C3C;
         --allu-laranja: #FF8F00;
@@ -293,12 +293,12 @@ st.markdown(
 
     /* Sidebar */
     [data-testid="stSidebar"] {
-        background-color: #F1F8E9;
+        background-color: #F2F2F2;
     }
 
     /* Cabeçalho customizado */
     .allu-header {
-        background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 100%);
+        background: linear-gradient(135deg, #304D3C 0%, #3D6B4F 100%);
         color: white;
         padding: 1.2rem 1.5rem;
         border-radius: 10px;
@@ -337,7 +337,7 @@ st.markdown(
     .metric-card .value {
         font-size: 1.6rem;
         font-weight: 700;
-        color: #1B5E20;
+        color: #304D3C;
         line-height: 1.2;
     }
     .metric-card .value.destaque {
@@ -360,7 +360,7 @@ st.markdown(
         font-size: 0.88rem;
     }
     .breakdown-table th {
-        background-color: #1B5E20;
+        background-color: #304D3C;
         color: white;
         padding: 0.5rem 0.8rem;
         text-align: left;
@@ -392,7 +392,7 @@ st.markdown(
         font-size: 0.75rem;
         font-weight: 600;
     }
-    .badge-azul { background: #C8E6C9; color: #1B5E20; }
+    .badge-azul { background: #C8E6C9; color: #304D3C; }
     .badge-verde { background: #D5F5E3; color: #1A7A42; }
     .badge-laranja { background: #FEF9E7; color: #B7770D; }
 
@@ -400,17 +400,17 @@ st.markdown(
     .section-title {
         font-size: 0.9rem;
         font-weight: 700;
-        color: #1B5E20;
+        color: #304D3C;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        border-left: 3px solid #1B5E20;
+        border-left: 3px solid #304D3C;
         padding-left: 0.6rem;
         margin: 1.2rem 0 0.8rem 0;
     }
 
     /* Botão principal */
     [data-testid="stButton"] button[kind="primary"] {
-        background-color: #1B5E20;
+        background-color: #304D3C;
         color: white;
         border: none;
         border-radius: 8px;
@@ -419,17 +419,17 @@ st.markdown(
         width: 100%;
     }
     [data-testid="stButton"] button[kind="primary"]:hover {
-        background-color: #2E7D32;
+        background-color: #3D6B4F;
     }
 
     /* Info box */
     .info-box {
         background: #E8F5E9;
-        border-left: 4px solid #1B5E20;
+        border-left: 4px solid #304D3C;
         border-radius: 4px;
         padding: 0.8rem 1rem;
         font-size: 0.85rem;
-        color: #1B5E20;
+        color: #304D3C;
         margin: 0.8rem 0;
     }
 
@@ -456,7 +456,7 @@ ASSETS_CSV = os.path.join(
     "pricing_engine", "data", "assets.csv"
 )
 
-COR_AZUL     = "#1B5E20"     # Verde escuro Allu (principal)
+COR_AZUL     = "#304D3C"     # Verde escuro Allu (principal)
 COR_VERDE    = "#43A047"     # Verde médio Allu (destaque positivo)
 COR_VERMELHO = "#E74C3C"     # Vermelho (alertas)
 COR_LARANJA  = "#FF8F00"     # Âmbar (secundário)
@@ -535,7 +535,7 @@ def render_sidebar():
             """
             <div style="text-align:center; padding: 1rem 0 1.5rem 0;">
                 <div style="font-size:2rem; margin-bottom:0.3rem;">📱</div>
-                <div style="font-size:1.2rem; font-weight:800; color:#1B5E20;">Allu Pricing Engine</div>
+                <div style="font-size:1.2rem; font-weight:800; color:#304D3C;">Allu Pricing Engine</div>
                 <div style="font-size:0.75rem; color:#6C757D; margin-top:0.2rem;">
                     Device as a Service — Precificação
                 </div>
@@ -996,8 +996,8 @@ def render_tab_premissas(result):
     ]
 
     # Estilos
-    th_s = "background:#1B5E20;color:white;padding:0.45rem 0.7rem;font-size:0.82rem;white-space:nowrap;"
-    hdr_s = "background:#E8F5E9;color:#1B5E20;font-weight:700;padding:0.4rem 0.7rem;font-size:0.82rem;"
+    th_s = "background:#304D3C;color:white;padding:0.45rem 0.7rem;font-size:0.82rem;white-space:nowrap;"
+    hdr_s = "background:#E8F5E9;color:#304D3C;font-weight:700;padding:0.4rem 0.7rem;font-size:0.82rem;"
     td_s = "padding:0.38rem 0.7rem;font-size:0.82rem;border-bottom:1px solid #F0F0F0;"
 
     header = (f'<th style="{th_s}">Premissa</th>'
@@ -1086,12 +1086,12 @@ def render_tab_cashflow(result):
     mes_labels = [f"M{d['cal_m']}" for d in details]
 
     # Estilos
-    th_s = "background:#1B5E20;color:white;padding:0.35rem 0.5rem;font-size:0.78rem;white-space:nowrap;text-align:center;min-width:70px;"
+    th_s = "background:#304D3C;color:white;padding:0.35rem 0.5rem;font-size:0.78rem;white-space:nowrap;text-align:center;min-width:70px;"
     td_s = "padding:0.3rem 0.5rem;font-size:0.78rem;text-align:right;border-bottom:1px solid #F0F0F0;white-space:nowrap;"
     td_label_s = "padding:0.3rem 0.5rem;font-size:0.78rem;text-align:left;border-bottom:1px solid #F0F0F0;white-space:nowrap;position:sticky;left:0;background:white;z-index:1;"
-    tot_s = "padding:0.35rem 0.5rem;font-size:0.78rem;text-align:right;font-weight:700;border-top:2px solid #1B5E20;border-bottom:1px solid #1B5E20;white-space:nowrap;"
+    tot_s = "padding:0.35rem 0.5rem;font-size:0.78rem;text-align:right;font-weight:700;border-top:2px solid #304D3C;border-bottom:1px solid #304D3C;white-space:nowrap;"
     tot_label_s = tot_s.replace("text-align:right", "text-align:left") + "position:sticky;left:0;background:#F1F8E9;z-index:1;"
-    grand_s = "padding:0.35rem 0.5rem;font-size:0.78rem;text-align:right;font-weight:700;background:#1B5E20;color:white;white-space:nowrap;"
+    grand_s = "padding:0.35rem 0.5rem;font-size:0.78rem;text-align:right;font-weight:700;background:#304D3C;color:white;white-space:nowrap;"
     grand_label_s = grand_s.replace("text-align:right", "text-align:left") + "position:sticky;left:0;z-index:1;"
 
     # Header
@@ -1100,7 +1100,7 @@ def render_tab_cashflow(result):
         header += f'<th style="{th_s}">{lbl}</th>'
 
     # Estilos adicionais
-    hdr_s = "background:#E8F5E9;color:#1B5E20;font-weight:700;padding:0.4rem 0.5rem;font-size:0.78rem;"
+    hdr_s = "background:#E8F5E9;color:#304D3C;font-weight:700;padding:0.4rem 0.5rem;font-size:0.78rem;"
 
     # Body
     body = ""
@@ -1324,7 +1324,7 @@ def render_tab_breakdown(result):
         cores_pizza = [
             "#E74C3C", "#C0392B", "#E67E22",
             "#F39C12", "#43A047", "#1ABC9C",
-            "#3498DB", "#2980B9", "#1B5E20",
+            "#3498DB", "#2980B9", "#304D3C",
         ]
 
         fig_pizza = go.Figure(
@@ -1782,10 +1782,10 @@ def render_tab_dfc(result):
             ("= CF TOTAL (FCO + FCI + FCF)", "cf_total", "grand_total"),
         ]
 
-        th_style  = "background:#1B5E20;color:white;padding:0.45rem 0.7rem;font-size:0.82rem;white-space:nowrap;"
-        hdr_style = "background:#E8F5E9;color:#1B5E20;font-weight:700;padding:0.4rem 0.7rem;font-size:0.82rem;"
-        tot_style = "background:#F1F8E9;font-weight:700;border-top:2px solid #1B5E20;padding:0.4rem 0.7rem;font-size:0.82rem;"
-        grand_style = "background:#1B5E20;color:white;font-weight:700;padding:0.5rem 0.7rem;font-size:0.85rem;"
+        th_style  = "background:#304D3C;color:white;padding:0.45rem 0.7rem;font-size:0.82rem;white-space:nowrap;"
+        hdr_style = "background:#E8F5E9;color:#304D3C;font-weight:700;padding:0.4rem 0.7rem;font-size:0.82rem;"
+        tot_style = "background:#F1F8E9;font-weight:700;border-top:2px solid #304D3C;padding:0.4rem 0.7rem;font-size:0.82rem;"
+        grand_style = "background:#304D3C;color:white;font-weight:700;padding:0.5rem 0.7rem;font-size:0.85rem;"
         td_style  = "padding:0.38rem 0.7rem;font-size:0.82rem;border-bottom:1px solid #F0F0F0;"
         pos_style = "color:#43A047;"
         neg_style = "color:#E74C3C;"
@@ -1869,13 +1869,13 @@ def render_tab_dfc(result):
     mes_labels = [f"M{d['cal_m']}" for d in details]
 
     # Estilos
-    th_s = "background:#1B5E20;color:white;padding:0.35rem 0.5rem;font-size:0.76rem;white-space:nowrap;text-align:center;min-width:68px;"
+    th_s = "background:#304D3C;color:white;padding:0.35rem 0.5rem;font-size:0.76rem;white-space:nowrap;text-align:center;min-width:68px;"
     td_s = "padding:0.28rem 0.5rem;font-size:0.76rem;text-align:right;border-bottom:1px solid #F0F0F0;white-space:nowrap;"
     td_lbl = "padding:0.28rem 0.5rem;font-size:0.76rem;text-align:left;border-bottom:1px solid #F0F0F0;white-space:nowrap;position:sticky;left:0;background:white;z-index:1;"
-    hdr_s = "background:#E8F5E9;color:#1B5E20;font-weight:700;padding:0.35rem 0.5rem;font-size:0.76rem;"
-    tot_s = "padding:0.32rem 0.5rem;font-size:0.76rem;text-align:right;font-weight:700;border-top:2px solid #1B5E20;border-bottom:1px solid #1B5E20;white-space:nowrap;"
+    hdr_s = "background:#E8F5E9;color:#304D3C;font-weight:700;padding:0.35rem 0.5rem;font-size:0.76rem;"
+    tot_s = "padding:0.32rem 0.5rem;font-size:0.76rem;text-align:right;font-weight:700;border-top:2px solid #304D3C;border-bottom:1px solid #304D3C;white-space:nowrap;"
     tot_lbl = tot_s.replace("text-align:right", "text-align:left") + "position:sticky;left:0;background:#F1F8E9;z-index:1;"
-    grd_s = "padding:0.32rem 0.5rem;font-size:0.76rem;text-align:right;font-weight:700;background:#1B5E20;color:white;white-space:nowrap;"
+    grd_s = "padding:0.32rem 0.5rem;font-size:0.76rem;text-align:right;font-weight:700;background:#304D3C;color:white;white-space:nowrap;"
     grd_lbl = grd_s.replace("text-align:right", "text-align:left") + "position:sticky;left:0;z-index:1;"
 
     header_html = f'<th style="{th_s};text-align:left;min-width:180px;position:sticky;left:0;z-index:2;">Rubrica</th>'
@@ -1935,11 +1935,11 @@ def render_tab_dre(result):
     # ----------------------------------------------------------------
     # Estilos da tabela
     # ----------------------------------------------------------------
-    th_style    = "background:#1B5E20;color:white;padding:0.45rem 0.7rem;font-size:0.82rem;white-space:nowrap;"
-    hdr_style   = "background:#E8F5E9;color:#1B5E20;font-weight:700;padding:0.4rem 0.7rem;font-size:0.82rem;"
-    sub_style   = "background:#F1F8E9;color:#2E7D32;font-weight:600;padding:0.38rem 0.7rem;font-size:0.80rem;font-style:italic;"
-    tot_style   = "background:#F1F8E9;font-weight:700;border-top:2px solid #1B5E20;padding:0.4rem 0.7rem;font-size:0.82rem;"
-    grand_style = "background:#1B5E20;color:white;font-weight:700;padding:0.5rem 0.7rem;font-size:0.85rem;"
+    th_style    = "background:#304D3C;color:white;padding:0.45rem 0.7rem;font-size:0.82rem;white-space:nowrap;"
+    hdr_style   = "background:#E8F5E9;color:#304D3C;font-weight:700;padding:0.4rem 0.7rem;font-size:0.82rem;"
+    sub_style   = "background:#F1F8E9;color:#3D6B4F;font-weight:600;padding:0.38rem 0.7rem;font-size:0.80rem;font-style:italic;"
+    tot_style   = "background:#F1F8E9;font-weight:700;border-top:2px solid #304D3C;padding:0.4rem 0.7rem;font-size:0.82rem;"
+    grand_style = "background:#304D3C;color:white;font-weight:700;padding:0.5rem 0.7rem;font-size:0.85rem;"
     td_style    = "padding:0.38rem 0.7rem;font-size:0.82rem;border-bottom:1px solid #F0F0F0;"
     pos_style   = "color:#43A047;"
     neg_style   = "color:#E74C3C;"
@@ -2156,13 +2156,13 @@ def render_tab_dre(result):
     mes_labels = [f"M{d['cal_m']}" for d in details]
 
     # Estilos (reutiliza padrão das outras tabelas)
-    _th = "background:#1B5E20;color:white;padding:0.35rem 0.5rem;font-size:0.76rem;white-space:nowrap;text-align:center;min-width:68px;"
+    _th = "background:#304D3C;color:white;padding:0.35rem 0.5rem;font-size:0.76rem;white-space:nowrap;text-align:center;min-width:68px;"
     _td = "padding:0.28rem 0.5rem;font-size:0.76rem;text-align:right;border-bottom:1px solid #F0F0F0;white-space:nowrap;"
     _lbl = "padding:0.28rem 0.5rem;font-size:0.76rem;text-align:left;border-bottom:1px solid #F0F0F0;white-space:nowrap;position:sticky;left:0;background:white;z-index:1;"
-    _hdr = "background:#E8F5E9;color:#1B5E20;font-weight:700;padding:0.35rem 0.5rem;font-size:0.76rem;"
-    _tot = "padding:0.32rem 0.5rem;font-size:0.76rem;text-align:right;font-weight:700;border-top:2px solid #1B5E20;border-bottom:1px solid #1B5E20;white-space:nowrap;"
+    _hdr = "background:#E8F5E9;color:#304D3C;font-weight:700;padding:0.35rem 0.5rem;font-size:0.76rem;"
+    _tot = "padding:0.32rem 0.5rem;font-size:0.76rem;text-align:right;font-weight:700;border-top:2px solid #304D3C;border-bottom:1px solid #304D3C;white-space:nowrap;"
     _tot_lbl = _tot.replace("text-align:right", "text-align:left") + "position:sticky;left:0;background:#F1F8E9;z-index:1;"
-    _grd = "padding:0.32rem 0.5rem;font-size:0.76rem;text-align:right;font-weight:700;background:#1B5E20;color:white;white-space:nowrap;"
+    _grd = "padding:0.32rem 0.5rem;font-size:0.76rem;text-align:right;font-weight:700;background:#304D3C;color:white;white-space:nowrap;"
     _grd_lbl = _grd.replace("text-align:right", "text-align:left") + "position:sticky;left:0;z-index:1;"
 
     h_html = f'<th style="{_th};text-align:left;min-width:200px;position:sticky;left:0;z-index:2;">Rubrica</th>'
@@ -2351,7 +2351,7 @@ def run_with_auth():
         # Usuário logado — mostra botão de logout e roda o app
         authenticator.logout("Sair", "sidebar")
         st.sidebar.markdown(
-            f'<div style="color:#1B5E20;font-size:0.85rem;margin-bottom:1rem;">'
+            f'<div style="color:#304D3C;font-size:0.85rem;margin-bottom:1rem;">'
             f'Logado como: <b>{st.session_state.get("name", "")}</b></div>',
             unsafe_allow_html=True,
         )
@@ -2364,7 +2364,7 @@ def run_with_auth():
         st.markdown(
             """
             <div style="text-align:center;margin-top:3rem;">
-                <h1 style="color:#1B5E20;">Allu Pricing Engine</h1>
+                <h1 style="color:#304D3C;">Allu Pricing Engine</h1>
                 <p style="color:#6C757D;">Faça login para acessar a ferramenta de precificação.</p>
             </div>
             """,
