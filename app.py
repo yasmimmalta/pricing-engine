@@ -2330,46 +2330,35 @@ def main():
         render_tab_premissas(result)
 
 
-# Ponto de entrada com autenticação
-def run_with_auth():
-    """Envolve a aplicação com tela de login."""
-    # Carrega credenciais
-    auth_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "auth_config.yaml")
-    with open(auth_path, "r", encoding="utf-8") as f:
-        config = yaml.safe_load(f)
+# Ponto de entrada com senha simples
+SENHA_ALLU = "Allu2026!"
 
-    authenticator = stauth.Authenticate(
-        config["credentials"],
-        config["cookie"]["name"],
-        config["cookie"]["key"],
-        config["cookie"]["expiry_days"],
+
+def run_with_auth():
+    """Tela de senha simples — persiste na sessão do navegador."""
+    if st.session_state.get("autenticado"):
+        main()
+        return
+
+    st.markdown(
+        """
+        <div style="text-align:center;margin-top:5rem;">
+            <h1 style="color:#304D3C;">Allu Pricing Engine</h1>
+            <p style="color:#6C757D;">Digite a senha para acessar.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
-    authenticator.login()
-
-    if st.session_state.get("authentication_status"):
-        # Usuário logado — mostra botão de logout e roda o app
-        authenticator.logout("Sair", "sidebar")
-        st.sidebar.markdown(
-            f'<div style="color:#304D3C;font-size:0.85rem;margin-bottom:1rem;">'
-            f'Logado como: <b>{st.session_state.get("name", "")}</b></div>',
-            unsafe_allow_html=True,
-        )
-        main()
-
-    elif st.session_state.get("authentication_status") is False:
-        st.error("Usuário ou senha incorretos.")
-
-    elif st.session_state.get("authentication_status") is None:
-        st.markdown(
-            """
-            <div style="text-align:center;margin-top:3rem;">
-                <h1 style="color:#304D3C;">Allu Pricing Engine</h1>
-                <p style="color:#6C757D;">Faça login para acessar a ferramenta de precificação.</p>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        senha = st.text_input("Senha", type="password", key="login_senha")
+        if st.button("Entrar", use_container_width=True):
+            if senha == SENHA_ALLU:
+                st.session_state.autenticado = True
+                st.rerun()
+            else:
+                st.error("Senha incorreta.")
 
 
 if __name__ == "__main__":
