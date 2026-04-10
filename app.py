@@ -335,7 +335,7 @@ st.markdown(
     .metric-card .value {
         font-size: 1.6rem;
         font-weight: 700;
-        color: #304D3C;
+        color: #262626;
         line-height: 1.2;
     }
     .metric-card .value.destaque {
@@ -390,7 +390,7 @@ st.markdown(
         font-size: 0.75rem;
         font-weight: 600;
     }
-    .badge-azul { background: #EFF6EA; color: #304D3C; }
+    .badge-azul { background: #EFF6EA; color: #262626; }
     .badge-verde { background: #D5F5E3; color: #1A7A42; }
     .badge-laranja { background: #FEF9E7; color: #B7770D; }
 
@@ -398,7 +398,7 @@ st.markdown(
     .section-title {
         font-size: 0.9rem;
         font-weight: 700;
-        color: #304D3C;
+        color: #262626;
         text-transform: uppercase;
         letter-spacing: 0.08em;
         border-left: 3px solid #304D3C;
@@ -427,7 +427,7 @@ st.markdown(
         border-radius: 4px;
         padding: 0.8rem 1rem;
         font-size: 0.85rem;
-        color: #304D3C;
+        color: #262626;
         margin: 0.8rem 0;
     }
 
@@ -2258,7 +2258,7 @@ def main():
         # Estado inicial: nenhum cálculo realizado ainda
         st.markdown(
             """
-            <div class="info-box" style="font-size:1rem; padding: 2rem 2.5rem; text-align:center;">
+            <div class="info-box" style="font-size:1rem; padding: 2rem 2.5rem; text-align:left;">
                 <b style="font-size:1.2rem;">Allu Pricing Engine</b><br><br>
                 Selecione o ativo, o tipo de cliente e o prazo do contrato no painel à esquerda.<br>
                 Em seguida, clique em <b>Calcular Preço</b> para gerar a análise completa de precificação.
