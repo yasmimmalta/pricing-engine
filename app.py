@@ -311,7 +311,7 @@ st.markdown(
         font-weight: 700;
     }
     .allu-header p {
-        color: #C8E6C9;
+        color: #EFF6EA;
         margin: 0.2rem 0 0 0;
         font-size: 0.85rem;
     }
@@ -374,7 +374,7 @@ st.markdown(
         background-color: #F8F9FA;
     }
     .breakdown-table tr:hover td {
-        background-color: #E8F5E9;
+        background-color: #EFF6EA;
     }
     .breakdown-table .valor-positivo {
         color: #43A047;
@@ -392,7 +392,7 @@ st.markdown(
         font-size: 0.75rem;
         font-weight: 600;
     }
-    .badge-azul { background: #C8E6C9; color: #304D3C; }
+    .badge-azul { background: #EFF6EA; color: #304D3C; }
     .badge-verde { background: #D5F5E3; color: #1A7A42; }
     .badge-laranja { background: #FEF9E7; color: #B7770D; }
 
@@ -424,7 +424,7 @@ st.markdown(
 
     /* Info box */
     .info-box {
-        background: #E8F5E9;
+        background: #EFF6EA;
         border-left: 4px solid #304D3C;
         border-radius: 4px;
         padding: 0.8rem 1rem;
@@ -997,7 +997,7 @@ def render_tab_premissas(result):
 
     # Estilos
     th_s = "background:#304D3C;color:white;padding:0.45rem 0.7rem;font-size:0.82rem;white-space:nowrap;"
-    hdr_s = "background:#E8F5E9;color:#304D3C;font-weight:700;padding:0.4rem 0.7rem;font-size:0.82rem;"
+    hdr_s = "background:#EFF6EA;color:#304D3C;font-weight:700;padding:0.4rem 0.7rem;font-size:0.82rem;"
     td_s = "padding:0.38rem 0.7rem;font-size:0.82rem;border-bottom:1px solid #F0F0F0;"
 
     header = (f'<th style="{th_s}">Premissa</th>'
@@ -1090,7 +1090,7 @@ def render_tab_cashflow(result):
     td_s = "padding:0.3rem 0.5rem;font-size:0.78rem;text-align:right;border-bottom:1px solid #F0F0F0;white-space:nowrap;"
     td_label_s = "padding:0.3rem 0.5rem;font-size:0.78rem;text-align:left;border-bottom:1px solid #F0F0F0;white-space:nowrap;position:sticky;left:0;background:white;z-index:1;"
     tot_s = "padding:0.35rem 0.5rem;font-size:0.78rem;text-align:right;font-weight:700;border-top:2px solid #304D3C;border-bottom:1px solid #304D3C;white-space:nowrap;"
-    tot_label_s = tot_s.replace("text-align:right", "text-align:left") + "position:sticky;left:0;background:#F1F8E9;z-index:1;"
+    tot_label_s = tot_s.replace("text-align:right", "text-align:left") + "position:sticky;left:0;background:#EFF6EA;z-index:1;"
     grand_s = "padding:0.35rem 0.5rem;font-size:0.78rem;text-align:right;font-weight:700;background:#304D3C;color:white;white-space:nowrap;"
     grand_label_s = grand_s.replace("text-align:right", "text-align:left") + "position:sticky;left:0;z-index:1;"
 
@@ -1100,7 +1100,7 @@ def render_tab_cashflow(result):
         header += f'<th style="{th_s}">{lbl}</th>'
 
     # Estilos adicionais
-    hdr_s = "background:#E8F5E9;color:#304D3C;font-weight:700;padding:0.4rem 0.5rem;font-size:0.78rem;"
+    hdr_s = "background:#EFF6EA;color:#304D3C;font-weight:700;padding:0.4rem 0.5rem;font-size:0.78rem;"
 
     # Body
     body = ""
@@ -1783,8 +1783,8 @@ def render_tab_dfc(result):
         ]
 
         th_style  = "background:#304D3C;color:white;padding:0.45rem 0.7rem;font-size:0.82rem;white-space:nowrap;"
-        hdr_style = "background:#E8F5E9;color:#304D3C;font-weight:700;padding:0.4rem 0.7rem;font-size:0.82rem;"
-        tot_style = "background:#F1F8E9;font-weight:700;border-top:2px solid #304D3C;padding:0.4rem 0.7rem;font-size:0.82rem;"
+        hdr_style = "background:#EFF6EA;color:#304D3C;font-weight:700;padding:0.4rem 0.7rem;font-size:0.82rem;"
+        tot_style = "background:#EFF6EA;font-weight:700;border-top:2px solid #304D3C;padding:0.4rem 0.7rem;font-size:0.82rem;"
         grand_style = "background:#304D3C;color:white;font-weight:700;padding:0.5rem 0.7rem;font-size:0.85rem;"
         td_style  = "padding:0.38rem 0.7rem;font-size:0.82rem;border-bottom:1px solid #F0F0F0;"
         pos_style = "color:#43A047;"
@@ -1872,9 +1872,9 @@ def render_tab_dfc(result):
     th_s = "background:#304D3C;color:white;padding:0.35rem 0.5rem;font-size:0.76rem;white-space:nowrap;text-align:center;min-width:68px;"
     td_s = "padding:0.28rem 0.5rem;font-size:0.76rem;text-align:right;border-bottom:1px solid #F0F0F0;white-space:nowrap;"
     td_lbl = "padding:0.28rem 0.5rem;font-size:0.76rem;text-align:left;border-bottom:1px solid #F0F0F0;white-space:nowrap;position:sticky;left:0;background:white;z-index:1;"
-    hdr_s = "background:#E8F5E9;color:#304D3C;font-weight:700;padding:0.35rem 0.5rem;font-size:0.76rem;"
+    hdr_s = "background:#EFF6EA;color:#304D3C;font-weight:700;padding:0.35rem 0.5rem;font-size:0.76rem;"
     tot_s = "padding:0.32rem 0.5rem;font-size:0.76rem;text-align:right;font-weight:700;border-top:2px solid #304D3C;border-bottom:1px solid #304D3C;white-space:nowrap;"
-    tot_lbl = tot_s.replace("text-align:right", "text-align:left") + "position:sticky;left:0;background:#F1F8E9;z-index:1;"
+    tot_lbl = tot_s.replace("text-align:right", "text-align:left") + "position:sticky;left:0;background:#EFF6EA;z-index:1;"
     grd_s = "padding:0.32rem 0.5rem;font-size:0.76rem;text-align:right;font-weight:700;background:#304D3C;color:white;white-space:nowrap;"
     grd_lbl = grd_s.replace("text-align:right", "text-align:left") + "position:sticky;left:0;z-index:1;"
 
@@ -1936,9 +1936,9 @@ def render_tab_dre(result):
     # Estilos da tabela
     # ----------------------------------------------------------------
     th_style    = "background:#304D3C;color:white;padding:0.45rem 0.7rem;font-size:0.82rem;white-space:nowrap;"
-    hdr_style   = "background:#E8F5E9;color:#304D3C;font-weight:700;padding:0.4rem 0.7rem;font-size:0.82rem;"
-    sub_style   = "background:#F1F8E9;color:#3D6B4F;font-weight:600;padding:0.38rem 0.7rem;font-size:0.80rem;font-style:italic;"
-    tot_style   = "background:#F1F8E9;font-weight:700;border-top:2px solid #304D3C;padding:0.4rem 0.7rem;font-size:0.82rem;"
+    hdr_style   = "background:#EFF6EA;color:#304D3C;font-weight:700;padding:0.4rem 0.7rem;font-size:0.82rem;"
+    sub_style   = "background:#EFF6EA;color:#3D6B4F;font-weight:600;padding:0.38rem 0.7rem;font-size:0.80rem;font-style:italic;"
+    tot_style   = "background:#EFF6EA;font-weight:700;border-top:2px solid #304D3C;padding:0.4rem 0.7rem;font-size:0.82rem;"
     grand_style = "background:#304D3C;color:white;font-weight:700;padding:0.5rem 0.7rem;font-size:0.85rem;"
     td_style    = "padding:0.38rem 0.7rem;font-size:0.82rem;border-bottom:1px solid #F0F0F0;"
     pos_style   = "color:#43A047;"
@@ -2159,9 +2159,9 @@ def render_tab_dre(result):
     _th = "background:#304D3C;color:white;padding:0.35rem 0.5rem;font-size:0.76rem;white-space:nowrap;text-align:center;min-width:68px;"
     _td = "padding:0.28rem 0.5rem;font-size:0.76rem;text-align:right;border-bottom:1px solid #F0F0F0;white-space:nowrap;"
     _lbl = "padding:0.28rem 0.5rem;font-size:0.76rem;text-align:left;border-bottom:1px solid #F0F0F0;white-space:nowrap;position:sticky;left:0;background:white;z-index:1;"
-    _hdr = "background:#E8F5E9;color:#304D3C;font-weight:700;padding:0.35rem 0.5rem;font-size:0.76rem;"
+    _hdr = "background:#EFF6EA;color:#304D3C;font-weight:700;padding:0.35rem 0.5rem;font-size:0.76rem;"
     _tot = "padding:0.32rem 0.5rem;font-size:0.76rem;text-align:right;font-weight:700;border-top:2px solid #304D3C;border-bottom:1px solid #304D3C;white-space:nowrap;"
-    _tot_lbl = _tot.replace("text-align:right", "text-align:left") + "position:sticky;left:0;background:#F1F8E9;z-index:1;"
+    _tot_lbl = _tot.replace("text-align:right", "text-align:left") + "position:sticky;left:0;background:#EFF6EA;z-index:1;"
     _grd = "padding:0.32rem 0.5rem;font-size:0.76rem;text-align:right;font-weight:700;background:#304D3C;color:white;white-space:nowrap;"
     _grd_lbl = _grd.replace("text-align:right", "text-align:left") + "position:sticky;left:0;z-index:1;"
 
