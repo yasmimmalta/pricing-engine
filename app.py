@@ -2258,10 +2258,10 @@ def main():
         # Estado inicial: nenhum cálculo realizado ainda
         st.markdown(
             """
-            <div class="info-box" style="font-size:1rem; padding: 1.5rem 2rem;">
-                <b>Bem-vindo à Allu Pricing Engine!</b><br><br>
-                Configure o ativo, tipo de cliente e prazo na barra lateral,
-                e clique em <b>Calcular Preço</b> para ver os resultados.
+            <div class="info-box" style="font-size:1rem; padding: 2rem 2.5rem; text-align:center;">
+                <b style="font-size:1.2rem;">Allu Pricing Engine</b><br><br>
+                Selecione o ativo, o tipo de cliente e o prazo do contrato no painel à esquerda.<br>
+                Em seguida, clique em <b>Calcular Preço</b> para gerar a análise completa de precificação.
             </div>
             """,
             unsafe_allow_html=True,
