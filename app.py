@@ -2302,17 +2302,14 @@ def main():
         unsafe_allow_html=True,
     )
 
-    tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "Premissas",
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
         "Resultado",
         "Fluxo de Caixa",
         "Breakdown",
         "DFC — Por Natureza",
         "DRE",
+        "Premissas",
     ])
-
-    with tab0:
-        render_tab_premissas(result)
 
     with tab1:
         render_tab_resultado(result)
@@ -2328,6 +2325,9 @@ def main():
 
     with tab5:
         render_tab_dre(result)
+
+    with tab6:
+        render_tab_premissas(result)
 
 
 # Ponto de entrada com autenticação
