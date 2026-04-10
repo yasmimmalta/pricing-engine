@@ -1105,7 +1105,7 @@ def render_tab_cashflow(result):
     ncols = len(details)
     for nome, key, tipo in LINHAS:
         if tipo == "header":
-            body += f'<tr><td style="{hdr_s};position:sticky;left:0;z-index:1;" colspan="{ncols + 1}">{nome}</td></tr>'
+            body += f'<tr><td style="{hdr_s};position:sticky;left:0;z-index:1;">{nome}</td>' + f'<td style="{hdr_s}"></td>' * ncols + '</tr>'
             continue
 
         if tipo == "text":
@@ -1884,7 +1884,7 @@ def render_tab_dfc(result):
     ncols = len(details)
     for nome, key, tipo in LINHAS_MENSAL:
         if tipo == "header":
-            body_html += f'<tr><td style="{hdr_s};position:sticky;left:0;z-index:1;" colspan="{ncols + 1}">{nome}</td></tr>'
+            body_html += f'<tr><td style="{hdr_s};position:sticky;left:0;z-index:1;">{nome}</td>' + f'<td style="{hdr_s}"></td>' * ncols + '</tr>'
             continue
         if tipo == "text":
             rh = f'<td style="{td_lbl}">{nome}</td>'
@@ -2171,7 +2171,7 @@ def render_tab_dre(result):
     ncols = len(details)
     for nome, key, tipo in LINHAS_DRE_MENSAL:
         if tipo == "header":
-            b_html += f'<tr><td style="{_hdr};position:sticky;left:0;z-index:1;" colspan="{ncols + 1}">{nome}</td></tr>'
+            b_html += f'<tr><td style="{_hdr};position:sticky;left:0;z-index:1;">{nome}</td>' + f'<td style="{_hdr}"></td>' * ncols + '</tr>'
             continue
         if tipo == "text":
             rh = f'<td style="{_lbl}">{nome}</td>'
