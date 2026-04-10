@@ -12,8 +12,6 @@ import io
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
-import streamlit_authenticator as stauth
-import yaml
 from plotly.subplots import make_subplots
 
 # Garante que o pacote pricing_engine está no path
