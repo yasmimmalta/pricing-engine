@@ -182,6 +182,20 @@ def price_asset(
     suggested_price_raw = max(candidates) if candidates else None
     suggested_price = round_to_90(suggested_price_raw) if suggested_price_raw else None
 
+    # Identifica qual restrição é dominante (a que exige o preço mais alto)
+    _constraint_map = [
+        (price_for_irr,         "TIR Desalavancada"),
+        (price_for_payback,     "Payback Desalav."),
+        (price_for_margin,      "Margem EBITDA"),
+        (price_for_payback_lev, "Payback Alav."),
+    ]
+    binding_constraint = None
+    if suggested_price_raw is not None:
+        for price, name in _constraint_map:
+            if price is not None and abs(price - suggested_price_raw) < 0.01:
+                binding_constraint = name
+                break
+
     # ----------------------------------------------------------
     # 7. Preço breakeven: TIR = 0%
     # ----------------------------------------------------------
@@ -272,6 +286,11 @@ def price_asset(
         cf_lev=cf_lev_final,
         monthly_details=monthly_details,
         annual_cashflows=annual_cashflows,
+        price_for_irr_constraint=price_for_irr,
+        price_for_payback_constraint=price_for_payback,
+        price_for_margin_constraint=price_for_margin,
+        price_for_payback_lev_constraint=price_for_payback_lev,
+        binding_constraint=binding_constraint,
     )
 
 

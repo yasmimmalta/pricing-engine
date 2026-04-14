@@ -468,14 +468,16 @@ COR_GAP      = "#FFF3CD"     # Amarelo claro
 
 @st.cache_data
 def carregar_ativos_csv(filepath: str) -> pd.DataFrame:
-    """Carrega o CSV de ativos com cache."""
+    """Carrega o CSV de ativos com cache. Use carregar_ativos_csv.clear() para forçar recarga."""
     return pd.read_csv(filepath, sep=";")
 
 
 def df_para_assets(df: pd.DataFrame) -> dict:
-    """Converte DataFrame em dict de Asset."""
+    """Converte DataFrame em dict de Asset. Chave: id|condicao para suportar mesmo ativo em condições diferentes."""
     ativos = {}
     for _, row in df.iterrows():
+        condicao = str(row.get("condicao", "novo")).strip() if "condicao" in row.index else "novo"
+        chave = f"{row['id']}|{condicao}"
         ativo = Asset(
             id=str(row["id"]),
             name=str(row["name"]),
@@ -483,9 +485,9 @@ def df_para_assets(df: pd.DataFrame) -> dict:
             purchase_price=float(row["purchase_price"]),
             market_price=float(row["market_price"]),
             maintenance_annual_pct=float(row["maintenance_annual_pct"]),
-            condicao=str(row["condicao"]).strip() if "condicao" in row.index else "novo",
+            condicao=condicao,
         )
-        ativos[ativo.id] = ativo
+        ativos[chave] = ativo
     return ativos
 
 
@@ -552,14 +554,21 @@ def render_sidebar():
         df_ativos = carregar_ativos_csv(ASSETS_CSV)
         ativos_dict = df_para_assets(df_ativos)
 
-        opcoes_ativos = {row["name"]: row["id"] for _, row in df_ativos.iterrows()}
+        # Monta opções incluindo condição quando há duplicidade de nome
+        opcoes_ativos = {}
+        for _, row in df_ativos.iterrows():
+            condicao = str(row.get("condicao", "novo")).strip() if "condicao" in df_ativos.columns else "novo"
+            display = f"{row['name']} ({condicao.capitalize()})"
+            chave = f"{row['id']}|{condicao}"
+            opcoes_ativos[display] = chave
+
         ativo_nome_sel = st.selectbox(
             "Selecione o device",
             options=list(opcoes_ativos.keys()),
             label_visibility="collapsed",
         )
-        ativo_id_sel = opcoes_ativos[ativo_nome_sel]
-        ativo_sel = ativos_dict[ativo_id_sel]
+        ativo_chave_sel = opcoes_ativos[ativo_nome_sel]
+        ativo_sel = ativos_dict[ativo_chave_sel]
 
         # Exibe info do ativo selecionado
         st.markdown(
@@ -695,6 +704,13 @@ def render_sidebar():
         # Botão calcular
         calcular = st.button("Calcular Preço", type="primary", use_container_width=True)
 
+        # Botão recarregar base de ativos
+        if st.button("Recarregar base de ativos", use_container_width=True, help="Atualiza a lista de ativos relendo o arquivo assets.csv"):
+            carregar_ativos_csv.clear()
+            st.session_state.resultado = None
+            st.session_state.pop("all_results", None)
+            st.rerun()
+
     return {
         "ativo": ativo_sel,
         "client_type": client_type,
@@ -709,12 +725,10 @@ def render_sidebar():
 # TAB 1: RESULTADO
 # ----------------------------------------------------------
 
-def render_tab_resultado(result):
+def render_tab_resultado(result, all_results: dict):
     """Renderiza a aba de resultado principal."""
     from pricing_engine.models.contract import VALID_TERMS
 
-    # Calcula todos os prazos para cards e tabela
-    all_results = compute_all_prices(result.asset, result.contract.client_type, result.params)
     is_b2c = result.contract.client_type == ClientType.B2C
     prazos_todos = [12, 24, 36, 48]
 
@@ -745,7 +759,7 @@ def render_tab_resultado(result):
     st.markdown("<br>", unsafe_allow_html=True)
 
     # Linha 2: Indicadores-resumo
-    cols2 = st.columns(5)
+    cols2 = st.columns(6)
 
     with cols2[0]:
         tir_ok = result.unlevered_irr and result.unlevered_irr >= result.params.min_unlevered_irr - 0.001
@@ -806,6 +820,17 @@ def render_tab_resultado(result):
                 sub="Alvo: ≤ 30 meses",
                 destaque=pb_lev_ok,
                 alerta=not pb_lev_ok,
+            ),
+            unsafe_allow_html=True,
+        )
+
+    with cols2[5]:
+        binding = result.binding_constraint or "—"
+        st.markdown(
+            card_metrica(
+                "Restrição Dominante",
+                binding,
+                sub="Parâmetro que fixou o preço",
             ),
             unsafe_allow_html=True,
         )
@@ -988,9 +1013,16 @@ def render_tab_premissas(result):
         ("TIR mínima desalav.", f"{p.min_unlevered_irr:.0%}", "Hurdle rate — TIR desalavancada mínima alvo"),
         ("Payback máx. desalav.", "24 meses", "Restrição de payback desalavancado"),
         ("Payback máx. alav.", "30 meses", "Restrição de payback alavancado"),
-        ("Margem EBITDA mín.", "30%", "Restrição de margem EBITDA mínima"),
+        ("Margem EBITDA mín.", "13%", "Restrição de margem EBITDA mínima"),
         ("Gap mín. entre prazos", fmt_brl(10), "Diferença mínima de preço entre prazos adjacentes"),
         ("Gap máx. entre prazos", fmt_brl(30), "Diferença máxima de preço entre prazos adjacentes"),
+        # Resultado da otimização: preço mínimo por restrição
+        ("RESULTADO DA OTIMIZAÇÃO", "", "", "header"),
+        ("Preço mín. por TIR", fmt_brl(result.price_for_irr_constraint), "Preço mínimo para atingir a TIR alvo"),
+        ("Preço mín. por Payback Desalav.", fmt_brl(result.price_for_payback_constraint), "Preço mínimo para payback ≤ 24 meses"),
+        ("Preço mín. por Margem EBITDA", fmt_brl(result.price_for_margin_constraint), "Preço mínimo para margem ≥ 13%"),
+        ("Preço mín. por Payback Alav.", fmt_brl(result.price_for_payback_lev_constraint), "Preço mínimo para payback alav. ≤ 30 meses"),
+        ("Restrição dominante", result.binding_constraint or "—", "Restrição que determinou o preço final"),
     ]
 
     # Estilos
@@ -2246,6 +2278,7 @@ def main():
                 if resultado is None:
                     raise ValueError(f"Prazo {inputs['prazo']}m não encontrado no resultado.")
                 st.session_state.resultado = resultado
+                st.session_state.all_results = precos_por_prazo  # todos os prazos para render_tab_resultado
                 st.session_state.inputs_snapshot = inputs.copy()
             except Exception as e:
                 st.error(f"Erro no cálculo: {e}")
@@ -2310,7 +2343,7 @@ def main():
     ])
 
     with tab1:
-        render_tab_resultado(result)
+        render_tab_resultado(result, st.session_state.get("all_results", {}))
 
     with tab2:
         render_tab_cashflow(result)

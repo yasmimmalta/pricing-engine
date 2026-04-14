@@ -48,6 +48,12 @@ class PricingResult:
     cf_lev: Optional[np.ndarray] = None    # fluxo mensal alavancado
     monthly_details: List[Dict] = field(default_factory=list)
     annual_cashflows: List[Dict] = field(default_factory=list)  # FCO/FCI/FCF consolidado por ano
+    # Restrições individuais (preço mínimo exigido por cada uma)
+    price_for_irr_constraint: Optional[float] = None
+    price_for_payback_constraint: Optional[float] = None
+    price_for_margin_constraint: Optional[float] = None
+    price_for_payback_lev_constraint: Optional[float] = None
+    binding_constraint: Optional[str] = None  # qual restrição fixou o preço
 
     def summary_dict(self) -> dict:
         """

@@ -1,4 +1,5 @@
 id;name;category;market_price;purchase_price;maintenance_annual_pct;condicao
+ip16_256;iPhone 16 256GB;iphone;5999;3885;0.1122;novo
 ip17_256;iPhone 17 256GB;iphone;7999;5885;0.1122;novo
 ip17pro_256;iPhone 17 Pro 256GB;iphone;10499;8199;0.1122;novo
 ip17promax_256;iPhone 17 Pro Max 256GB;iphone;11499;8599;0.1122;novo
