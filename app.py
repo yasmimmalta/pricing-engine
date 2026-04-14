@@ -830,14 +830,12 @@ def render_tab_resultado(result, all_results: dict):
         )
 
     with cols2[4]:
-        pb_lev_ok = result.payback_lev_months is not None and result.payback_lev_months <= 30
+        # Payback alavancado: exibido como output informativo (não é mais restrição de preço)
         st.markdown(
             card_metrica(
                 "Payback Alav.",
                 f"{result.payback_lev_months}m" if result.payback_lev_months else "—",
-                sub="Alvo: ≤ 30 meses",
-                destaque=pb_lev_ok,
-                alerta=not pb_lev_ok,
+                sub="Informativo",
             ),
             unsafe_allow_html=True,
         )
@@ -1019,7 +1017,7 @@ def render_tab_premissas(result):
         ("OTIMIZAÇÃO", "", "", "header"),
         ("TIR mínima desalav.", f"{p.min_unlevered_irr:.0%}", "Hurdle rate — TIR desalavancada mínima alvo"),
         ("Payback desalav.", "Apenas informativo", "Não influencia o preço — exibido somente como output"),
-        ("Payback máx. alav.", "30 meses", "Restrição de payback alavancado"),
+        ("Payback alav.", "Apenas informativo", "Não influencia o preço — exibido somente como output"),
         ("Margem EBITDA mín.", "13%", "Restrição de margem EBITDA mínima"),
         ("Gap mín. entre prazos", fmt_brl(10), "Diferença mínima de preço entre prazos adjacentes"),
         ("Gap máx. entre prazos", fmt_brl(30), "Diferença máxima de preço entre prazos adjacentes"),
@@ -1027,8 +1025,8 @@ def render_tab_premissas(result):
         ("RESULTADO DA OTIMIZAÇÃO", "", "", "header"),
         ("Preço mín. por TIR", fmt_brl(getattr(result, "price_for_irr_constraint", None)), "Preço mínimo para atingir a TIR alvo"),
         ("Preço mín. por Margem EBITDA", fmt_brl(getattr(result, "price_for_margin_constraint", None)), "Preço mínimo para margem ≥ 13%"),
-        ("Preço mín. por Payback Alav.", fmt_brl(getattr(result, "price_for_payback_lev_constraint", None)), "Preço mínimo para payback alav. ≤ 30 meses"),
         ("Payback Desalav. — preço que atingiria", fmt_brl(getattr(result, "price_for_payback_constraint", None)), "Referência informativa — não entra no solver"),
+        ("Payback Alav. — preço que atingiria", fmt_brl(getattr(result, "price_for_payback_lev_constraint", None)), "Referência informativa — não entra no solver"),
     ]
 
     # Estilos

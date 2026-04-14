@@ -177,16 +177,15 @@ def price_asset(
         max_payback=30,
     )
 
-    # Preço final = max das 3 restrições ativas (payback desalavancado é apenas informativo)
-    candidates = [p for p in [price_for_irr, price_for_margin, price_for_payback_lev] if p is not None]
+    # Preço final = max das 2 restrições ativas (ambos os paybacks são apenas informativos)
+    candidates = [p for p in [price_for_irr, price_for_margin] if p is not None]
     suggested_price_raw = max(candidates) if candidates else None
     suggested_price = round_to_90(suggested_price_raw) if suggested_price_raw else None
 
-    # Identifica qual restrição é dominante entre as 3 ativas
+    # Identifica qual restrição é dominante entre as 2 ativas
     _constraint_map = [
-        (price_for_irr,         "TIR Desalavancada"),
-        (price_for_margin,      "Margem EBITDA"),
-        (price_for_payback_lev, "Payback Alav."),
+        (price_for_irr,    "TIR Desalavancada"),
+        (price_for_margin, "Margem EBITDA"),
     ]
     binding_constraint = None
     if suggested_price_raw is not None:
