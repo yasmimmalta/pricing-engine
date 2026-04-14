@@ -825,7 +825,7 @@ def render_tab_resultado(result, all_results: dict):
         )
 
     with cols2[5]:
-        binding = result.binding_constraint or "—"
+        binding = getattr(result, "binding_constraint", None) or "—"
         st.markdown(
             card_metrica(
                 "Restrição Dominante",
@@ -1018,11 +1018,11 @@ def render_tab_premissas(result):
         ("Gap máx. entre prazos", fmt_brl(30), "Diferença máxima de preço entre prazos adjacentes"),
         # Resultado da otimização: preço mínimo por restrição
         ("RESULTADO DA OTIMIZAÇÃO", "", "", "header"),
-        ("Preço mín. por TIR", fmt_brl(result.price_for_irr_constraint), "Preço mínimo para atingir a TIR alvo"),
-        ("Preço mín. por Payback Desalav.", fmt_brl(result.price_for_payback_constraint), "Preço mínimo para payback ≤ 24 meses"),
-        ("Preço mín. por Margem EBITDA", fmt_brl(result.price_for_margin_constraint), "Preço mínimo para margem ≥ 13%"),
-        ("Preço mín. por Payback Alav.", fmt_brl(result.price_for_payback_lev_constraint), "Preço mínimo para payback alav. ≤ 30 meses"),
-        ("Restrição dominante", result.binding_constraint or "—", "Restrição que determinou o preço final"),
+        ("Preço mín. por TIR", fmt_brl(getattr(result, "price_for_irr_constraint", None)), "Preço mínimo para atingir a TIR alvo"),
+        ("Preço mín. por Payback Desalav.", fmt_brl(getattr(result, "price_for_payback_constraint", None)), "Preço mínimo para payback ≤ 24 meses"),
+        ("Preço mín. por Margem EBITDA", fmt_brl(getattr(result, "price_for_margin_constraint", None)), "Preço mínimo para margem ≥ 13%"),
+        ("Preço mín. por Payback Alav.", fmt_brl(getattr(result, "price_for_payback_lev_constraint", None)), "Preço mínimo para payback alav. ≤ 30 meses"),
+        ("Restrição dominante", getattr(result, "binding_constraint", None) or "—", "Restrição que determinou o preço final"),
     ]
 
     # Estilos
