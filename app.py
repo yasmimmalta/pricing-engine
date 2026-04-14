@@ -554,27 +554,47 @@ def render_sidebar():
         df_ativos = carregar_ativos_csv(ASSETS_CSV)
         ativos_dict = df_para_assets(df_ativos)
 
-        # Monta opções incluindo condição quando há duplicidade de nome
-        opcoes_ativos = {}
+        # Agrupa condições disponíveis por nome de ativo
+        # Estrutura: {nome: [(chave, condicao), ...]}
+        nomes_para_condicoes: dict = {}
         for _, row in df_ativos.iterrows():
             condicao = str(row.get("condicao", "novo")).strip() if "condicao" in df_ativos.columns else "novo"
-            display = f"{row['name']} ({condicao.capitalize()})"
             chave = f"{row['id']}|{condicao}"
-            opcoes_ativos[display] = chave
+            nome = str(row["name"])
+            nomes_para_condicoes.setdefault(nome, []).append((chave, condicao))
 
+        # Passo 1: selectbox com nomes únicos de ativos
         ativo_nome_sel = st.selectbox(
             "Selecione o device",
-            options=list(opcoes_ativos.keys()),
+            options=list(nomes_para_condicoes.keys()),
             label_visibility="collapsed",
         )
-        ativo_chave_sel = opcoes_ativos[ativo_nome_sel]
+
+        # Passo 2: campo de condição — só exibido se houver mais de uma opção
+        opcoes_cond = nomes_para_condicoes[ativo_nome_sel]
+        if len(opcoes_cond) > 1:
+            st.markdown('<div class="section-title">Condição do Ativo</div>', unsafe_allow_html=True)
+            cond_labels = [cond.capitalize() for _, cond in opcoes_cond]
+            cond_sel_label = st.radio(
+                "Condição",
+                options=cond_labels,
+                horizontal=True,
+                label_visibility="collapsed",
+            )
+            cond_idx = cond_labels.index(cond_sel_label)
+            ativo_chave_sel = opcoes_cond[cond_idx][0]
+        else:
+            ativo_chave_sel = opcoes_cond[0][0]
+
         ativo_sel = ativos_dict[ativo_chave_sel]
 
         # Exibe info do ativo selecionado
+        condicao_display = ativo_sel.condicao.capitalize() if hasattr(ativo_sel, "condicao") else ""
         st.markdown(
             f"""
             <div class="info-box">
-                <b>{ativo_sel.name}</b><br>
+                <b>{ativo_sel.name}</b>
+                {f'&nbsp;|&nbsp; Condição: <b>{condicao_display}</b>' if condicao_display else ''}<br>
                 Compra: {fmt_brl(ativo_sel.purchase_price)} &nbsp;|&nbsp;
                 Mercado: {fmt_brl(ativo_sel.market_price)}<br>
                 Categoria: <span style="text-transform:capitalize">{ativo_sel.category}</span>
@@ -759,7 +779,7 @@ def render_tab_resultado(result, all_results: dict):
     st.markdown("<br>", unsafe_allow_html=True)
 
     # Linha 2: Indicadores-resumo
-    cols2 = st.columns(6)
+    cols2 = st.columns(5)
 
     with cols2[0]:
         tir_ok = result.unlevered_irr and result.unlevered_irr >= result.params.min_unlevered_irr - 0.001
@@ -799,14 +819,12 @@ def render_tab_resultado(result, all_results: dict):
         )
 
     with cols2[3]:
-        pb_ok = result.payback_months is not None and result.payback_months <= 24
+        # Payback desalavancado: exibido como output informativo (não é mais restrição de preço)
         st.markdown(
             card_metrica(
                 "Payback Desalav.",
                 f"{result.payback_months}m" if result.payback_months else "—",
-                sub="Alvo: ≤ 24 meses",
-                destaque=pb_ok,
-                alerta=not pb_ok,
+                sub="Informativo",
             ),
             unsafe_allow_html=True,
         )
@@ -820,17 +838,6 @@ def render_tab_resultado(result, all_results: dict):
                 sub="Alvo: ≤ 30 meses",
                 destaque=pb_lev_ok,
                 alerta=not pb_lev_ok,
-            ),
-            unsafe_allow_html=True,
-        )
-
-    with cols2[5]:
-        binding = getattr(result, "binding_constraint", None) or "—"
-        st.markdown(
-            card_metrica(
-                "Restrição Dominante",
-                binding,
-                sub="Parâmetro que fixou o preço",
             ),
             unsafe_allow_html=True,
         )
@@ -1011,18 +1018,17 @@ def render_tab_premissas(result):
         # Otimização
         ("OTIMIZAÇÃO", "", "", "header"),
         ("TIR mínima desalav.", f"{p.min_unlevered_irr:.0%}", "Hurdle rate — TIR desalavancada mínima alvo"),
-        ("Payback máx. desalav.", "24 meses", "Restrição de payback desalavancado"),
+        ("Payback desalav.", "Apenas informativo", "Não influencia o preço — exibido somente como output"),
         ("Payback máx. alav.", "30 meses", "Restrição de payback alavancado"),
         ("Margem EBITDA mín.", "13%", "Restrição de margem EBITDA mínima"),
         ("Gap mín. entre prazos", fmt_brl(10), "Diferença mínima de preço entre prazos adjacentes"),
         ("Gap máx. entre prazos", fmt_brl(30), "Diferença máxima de preço entre prazos adjacentes"),
-        # Resultado da otimização: preço mínimo por restrição
+        # Resultado da otimização: preço mínimo por restrição ativa
         ("RESULTADO DA OTIMIZAÇÃO", "", "", "header"),
         ("Preço mín. por TIR", fmt_brl(getattr(result, "price_for_irr_constraint", None)), "Preço mínimo para atingir a TIR alvo"),
-        ("Preço mín. por Payback Desalav.", fmt_brl(getattr(result, "price_for_payback_constraint", None)), "Preço mínimo para payback ≤ 24 meses"),
         ("Preço mín. por Margem EBITDA", fmt_brl(getattr(result, "price_for_margin_constraint", None)), "Preço mínimo para margem ≥ 13%"),
         ("Preço mín. por Payback Alav.", fmt_brl(getattr(result, "price_for_payback_lev_constraint", None)), "Preço mínimo para payback alav. ≤ 30 meses"),
-        ("Restrição dominante", getattr(result, "binding_constraint", None) or "—", "Restrição que determinou o preço final"),
+        ("Payback Desalav. — preço que atingiria", fmt_brl(getattr(result, "price_for_payback_constraint", None)), "Referência informativa — não entra no solver"),
     ]
 
     # Estilos

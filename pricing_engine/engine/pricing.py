@@ -159,7 +159,7 @@ def price_asset(
         target_annual_irr=params.min_unlevered_irr,
     )
 
-    # 6b. Payback <= 24 meses
+    # 6b. Payback desalavancado — calculado apenas para output informativo, NÃO entra no solver
     price_for_payback = find_price_for_payback(
         full_cashflow_builder=full_cashflow_builder,
         max_payback=24,
@@ -177,15 +177,14 @@ def price_asset(
         max_payback=30,
     )
 
-    # Preço final = max dos 4 (menor preço que satisfaz todas as restrições)
-    candidates = [p for p in [price_for_irr, price_for_payback, price_for_margin, price_for_payback_lev] if p is not None]
+    # Preço final = max das 3 restrições ativas (payback desalavancado é apenas informativo)
+    candidates = [p for p in [price_for_irr, price_for_margin, price_for_payback_lev] if p is not None]
     suggested_price_raw = max(candidates) if candidates else None
     suggested_price = round_to_90(suggested_price_raw) if suggested_price_raw else None
 
-    # Identifica qual restrição é dominante (a que exige o preço mais alto)
+    # Identifica qual restrição é dominante entre as 3 ativas
     _constraint_map = [
         (price_for_irr,         "TIR Desalavancada"),
-        (price_for_payback,     "Payback Desalav."),
         (price_for_margin,      "Margem EBITDA"),
         (price_for_payback_lev, "Payback Alav."),
     ]
