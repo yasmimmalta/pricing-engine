@@ -480,20 +480,93 @@ def carregar_ativos_csv(filepath: str) -> pd.DataFrame:
 
 
 def carregar_meta_base() -> dict | None:
-    """Lê o metadata do último upload (nome, data, nº de ativos). Retorna None se nunca houve upload."""
+    """Lê o metadata do último upload. Retorna None se nunca houve upload."""
     if os.path.exists(ASSETS_META):
         with open(ASSETS_META, "r", encoding="utf-8") as f:
             return json.load(f)
     return None
 
 
-def validar_base_csv(df: pd.DataFrame) -> tuple[bool, list[str]]:
-    """Valida um DataFrame de ativos. Retorna (é_válido, lista_de_erros)."""
-    erros = []
+# Mapeamento: nomes de coluna amigáveis (PT) → nomes internos
+_COL_ALIAS: dict[str, str] = {
+    "nome do ativo": "name", "nome": "name", "name": "name",
+    "categoria": "category", "category": "category",
+    "preço de mercado": "market_price", "preco de mercado": "market_price", "market_price": "market_price",
+    "preço de compra": "purchase_price", "preco de compra": "purchase_price", "purchase_price": "purchase_price",
+    "manutenção a.a.": "maintenance_annual_pct", "manutencao a.a.": "maintenance_annual_pct",
+    "manutenção (% a.a.)": "maintenance_annual_pct", "maintenance_annual_pct": "maintenance_annual_pct",
+    "condição": "condicao", "condicao": "condicao",
+    "id": "id",
+}
 
-    colunas_faltando = _COLUNAS_OBRIGATORIAS - set(df.columns)
-    if colunas_faltando:
-        erros.append(f"Colunas obrigatórias ausentes: {', '.join(sorted(colunas_faltando))}")
+
+def _normalizar_colunas(df: pd.DataFrame) -> pd.DataFrame:
+    """Renomeia colunas usando _COL_ALIAS (aceita nomes em PT ou inglês)."""
+    rename = {col: _COL_ALIAS[col.strip().lower()]
+              for col in df.columns if col.strip().lower() in _COL_ALIAS}
+    return df.rename(columns=rename)
+
+
+def _parse_numero(val) -> float:
+    """Parse flexível de número: aceita float, int, 'R$ 3.885,00', '3885', '3.885', '3885,00'."""
+    if isinstance(val, (int, float)):
+        return float(val)
+    s = str(val).strip().replace("R$", "").replace(" ", "")
+    n_dot, n_com = s.count("."), s.count(",")
+    if n_dot >= 1 and n_com >= 1:
+        # Separadores mistos — o último é o decimal
+        if s.rfind(",") > s.rfind("."):
+            s = s.replace(".", "").replace(",", ".")   # BR: 1.234,56
+        else:
+            s = s.replace(",", "")                      # US: 1,234.56
+    elif n_com == 1 and n_dot == 0:
+        partes = s.split(",")
+        if len(partes[1]) == 3 and partes[1].isdigit():
+            s = s.replace(",", "")          # 3,885 → milhar
+        else:
+            s = s.replace(",", ".")          # 3885,00 → decimal
+    elif n_dot == 1 and n_com == 0:
+        partes = s.split(".")
+        if len(partes[1]) == 3 and partes[1].isdigit():
+            s = s.replace(".", "")          # 3.885 → milhar
+        # else: 3885.00 → decimal, mantém
+    elif n_dot > 1:
+        # Ex: 1.234.567 → milhar
+        partes = s.rsplit(".", 1)
+        s = partes[0].replace(".", "") + "." + partes[1]
+    return float(s)
+
+
+def _parse_pct(val) -> float:
+    """Parse de percentual: '11,22%' → 0.1122 | 0.1122 → 0.1122 | 11.22 → 0.1122."""
+    if isinstance(val, (int, float)):
+        f = float(val)
+        return f if 0.0 <= f <= 1.0 else f / 100.0
+    s = str(val).strip()
+    tem_pct = "%" in s
+    s = s.replace("%", "").strip().replace(",", ".")
+    f = float(s)
+    if tem_pct:
+        return f / 100.0
+    return f if 0.0 <= f <= 1.0 else f / 100.0
+
+
+def _gerar_id(name: str, condicao: str) -> str:
+    """Gera um ID estável a partir do nome e condição quando a coluna 'id' não existe."""
+    import unicodedata, re
+    nfkd = unicodedata.normalize("NFKD", str(name).lower())
+    ascii_str = "".join(c for c in nfkd if not unicodedata.combining(c))
+    slug = re.sub(r"[^a-z0-9]+", "_", ascii_str).strip("_")
+    return f"{slug}_{condicao}"
+
+
+def validar_base_df(df: pd.DataFrame) -> tuple[bool, list[str]]:
+    """Valida DataFrame normalizado de ativos. 'id' é opcional."""
+    erros: list[str] = []
+
+    faltando = _COLUNAS_OBRIGATORIAS - set(df.columns)
+    if faltando:
+        erros.append(f"Colunas obrigatórias ausentes: {', '.join(sorted(faltando))}")
 
     if len(df) == 0:
         erros.append("A base não pode estar vazia.")
@@ -502,21 +575,23 @@ def validar_base_csv(df: pd.DataFrame) -> tuple[bool, list[str]]:
         return False, erros
 
     for col in ["market_price", "purchase_price", "maintenance_annual_pct"]:
-        vals = pd.to_numeric(df[col], errors="coerce")
-        if vals.isna().any():
-            erros.append(f"Coluna '{col}' contém valores não numéricos.")
-        elif (vals <= 0).any():
-            erros.append(f"Coluna '{col}' contém valores ≤ 0.")
+        try:
+            vals = df[col].apply(_parse_numero if col != "maintenance_annual_pct" else _parse_pct)
+            if (vals <= 0).any():
+                erros.append(f"Coluna '{col}' contém valores ≤ 0.")
+        except Exception:
+            erros.append(f"Coluna '{col}' contém valores inválidos.")
 
-    ids = df["id"].astype(str).str.strip()
-    if ids.eq("").any() or df["id"].isna().any():
-        erros.append("Coluna 'id' contém valores vazios.")
+    if "id" in df.columns:
+        ids = df["id"].astype(str).str.strip()
+        if ids.eq("").any() or df["id"].isna().any():
+            erros.append("Coluna 'id' contém valores vazios.")
 
     return len(erros) == 0, erros
 
 
 def salvar_base_oficial(df: pd.DataFrame, filename: str) -> None:
-    """Grava o DataFrame como nova base oficial e atualiza o metadata."""
+    """Grava o DataFrame como nova base oficial (CSV interno) e atualiza o metadata."""
     df.to_csv(ASSETS_CSV, sep=";", index=False)
     meta = {
         "filename": filename,
@@ -528,22 +603,91 @@ def salvar_base_oficial(df: pd.DataFrame, filename: str) -> None:
 
 
 def df_para_assets(df: pd.DataFrame) -> dict:
-    """Converte DataFrame em dict de Asset. Chave: id|condicao para suportar mesmo ativo em condições diferentes."""
-    ativos = {}
+    """Converte DataFrame em dict de Asset. Aceita valores formatados (R$, %). ID opcional."""
+    ativos: dict = {}
+    tem_id = "id" in df.columns
     for _, row in df.iterrows():
         condicao = str(row.get("condicao", "novo")).strip() if "condicao" in row.index else "novo"
-        chave = f"{row['id']}|{condicao}"
+        id_ativo = str(row["id"]).strip() if tem_id and not pd.isna(row["id"]) else _gerar_id(str(row["name"]), condicao)
+        chave = f"{id_ativo}|{condicao}"
         ativo = Asset(
-            id=str(row["id"]),
+            id=id_ativo,
             name=str(row["name"]),
             category=str(row["category"]),
-            purchase_price=float(row["purchase_price"]),
-            market_price=float(row["market_price"]),
-            maintenance_annual_pct=float(row["maintenance_annual_pct"]),
+            purchase_price=_parse_numero(row["purchase_price"]),
+            market_price=_parse_numero(row["market_price"]),
+            maintenance_annual_pct=_parse_pct(row["maintenance_annual_pct"]),
             condicao=condicao,
         )
         ativos[chave] = ativo
     return ativos
+
+
+def gerar_template_xlsx() -> bytes:
+    """Gera planilha .xlsx com cabeçalho Allu e formatos de moeda/percentual."""
+    from openpyxl import Workbook
+    from openpyxl.styles import PatternFill, Font, Alignment
+    from openpyxl.utils import get_column_letter
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Base de Ativos"
+
+    colunas = [
+        ("name",                   "Nome do Ativo",       36, None),
+        ("category",               "Categoria",           22, None),
+        ("market_price",           "Preço de Mercado",    22, '#,##0.00'),
+        ("purchase_price",         "Preço de Compra",     22, '#,##0.00'),
+        ("maintenance_annual_pct", "Manutenção a.a.",     20, '0.00%'),
+        ("condicao",               "Condição",            12, None),
+    ]
+
+    fill  = PatternFill(start_color="304D3C", end_color="304D3C", fill_type="solid")
+    fonte = Font(bold=True, color="FFFFFF", size=11)
+    alin  = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+    for i, (_, label, width, _) in enumerate(colunas, 1):
+        c = ws.cell(row=1, column=i, value=label)
+        c.fill = fill
+        c.font = fonte
+        c.alignment = alin
+        ws.column_dimensions[get_column_letter(i)].width = width
+    ws.row_dimensions[1].height = 36
+    ws.freeze_panes = "A2"
+
+    exemplos = [
+        ["iPhone 16 256GB",       "iphone",           5999,  3885, 0.1122, "novo"],
+        ["iPhone 16 256GB",       "iphone",           5999,  5149, 0.1122, "usado"],
+        ["MacBook Air M4 256GB",  "macbook",         10999,  8399, 0.075,  "novo"],
+        ["Lenovo IdeaPad Slim 3", "notebook_windows", 4665,  4199, 0.085,  "novo"],
+    ]
+    for dados in exemplos:
+        ws.append(dados)
+
+    for row_num in range(2, ws.max_row + 1):
+        for i, (_, _, _, fmt) in enumerate(colunas, 1):
+            if fmt:
+                ws.cell(row=row_num, column=i).number_format = fmt
+
+    # Aba de referência de categorias
+    ws2 = wb.create_sheet("Categorias válidas")
+    for i, txt in enumerate(["Categoria", "Descrição"], 1):
+        c = ws2.cell(row=1, column=i, value=txt)
+        c.fill = fill
+        c.font = fonte
+    ws2.column_dimensions["A"].width = 25
+    ws2.column_dimensions["B"].width = 40
+    for cat, desc in [
+        ("iphone",           "Dispositivos Apple iPhone"),
+        ("macbook",          "MacBook Air / Pro"),
+        ("notebook_windows", "Notebooks Windows"),
+        ("default",          "Outras categorias"),
+    ]:
+        ws2.append([cat, desc])
+
+    buf = io.BytesIO()
+    wb.save(buf)
+    return buf.getvalue()
 
 
 def fmt_brl(val, decimais=2) -> str:
@@ -807,41 +951,54 @@ def render_sidebar():
                     unsafe_allow_html=True,
                 )
 
-            # Baixar base atual
-            with open(ASSETS_CSV, "rb") as f_csv:
+            # Botões de download: base atual e template
+            col_dl1, col_dl2 = st.columns(2)
+            with col_dl1:
+                with open(ASSETS_CSV, "rb") as f_csv:
+                    st.download_button(
+                        "Baixar base atual",
+                        data=f_csv.read(),
+                        file_name="assets.csv",
+                        mime="text/csv",
+                        use_container_width=True,
+                    )
+            with col_dl2:
+                tpl = gerar_template_xlsx()
                 st.download_button(
-                    "Baixar base atual",
-                    data=f_csv.read(),
-                    file_name="assets.csv",
-                    mime="text/csv",
+                    "Baixar template (.xlsx)",
+                    data=tpl,
+                    file_name="template_ativos.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                     use_container_width=True,
                 )
 
             st.divider()
 
-            # Upload de nova base
-            st.caption("Importar nova base")
+            # Upload de nova base (.csv ou .xlsx)
+            st.caption("Importar nova base (.csv ou .xlsx)")
             arquivo_upload = st.file_uploader(
-                "Selecione o CSV",
-                type=["csv"],
+                "Selecione o arquivo",
+                type=["csv", "xlsx"],
                 key="upload_assets_csv",
                 label_visibility="collapsed",
             )
 
             if arquivo_upload is not None:
-                # Tenta ler com separador ";" ou ","
+                df_novo = None
                 try:
-                    df_novo = pd.read_csv(arquivo_upload, sep=";")
-                    if len(df_novo.columns) == 1:
-                        arquivo_upload.seek(0)
-                        df_novo = pd.read_csv(arquivo_upload, sep=",")
-                except Exception:
-                    df_novo = None
+                    if arquivo_upload.name.endswith(".xlsx"):
+                        df_novo = pd.read_excel(arquivo_upload, engine="openpyxl")
+                    else:
+                        df_novo = pd.read_csv(arquivo_upload, sep=";")
+                        if len(df_novo.columns) == 1:
+                            arquivo_upload.seek(0)
+                            df_novo = pd.read_csv(arquivo_upload, sep=",")
+                except Exception as ex:
+                    st.error(f"Não foi possível ler o arquivo: {ex}")
 
-                if df_novo is None:
-                    st.error("Não foi possível ler o arquivo. Verifique o formato.")
-                else:
-                    valido, erros = validar_base_csv(df_novo)
+                if df_novo is not None:
+                    df_novo = _normalizar_colunas(df_novo)
+                    valido, erros = validar_base_df(df_novo)
                     if valido:
                         st.success(f"Arquivo válido — {len(df_novo)} ativos encontrados")
                         with st.expander("Preview da nova base"):
