@@ -84,9 +84,10 @@ def build_cashflows(
     #
     # NBV (valor líquido contábil) = purchase_price − accumulated_dep
     # ----------------------------------------------------------
-    dep_contabil_mensal      = asset.purchase_price * (params.dep_contabil_pct / 12)
+    base_dep_contabil        = asset.purchase_price * (1 + params.icms_pct)  # compra + ICMS
+    dep_contabil_mensal      = base_dep_contabil * (params.dep_contabil_pct / 12)
     accumulated_dep_contabil = dep_contabil_mensal * eco_total
-    nbv_at_sale              = asset.purchase_price - accumulated_dep_contabil
+    nbv_at_sale              = base_dep_contabil - accumulated_dep_contabil
 
     # ----------------------------------------------------------
     # Alíquota de impostos sobre receita para DRE (PIS/COFINS + ISS)
@@ -176,14 +177,15 @@ def build_cashflows(
         "fco_customer_benefits": 0.0,
         "fco_logistics_devolucao": 0.0,
         "fco_ir_csll": 0.0,
-        "fco_icms": icms_value,
-        "fco_total": -icms_value,
+        "fco_icms": 0.0,
+        "fco_total": 0.0,
         "fci_compra": asset.purchase_price,
+        "fci_icms": icms_value,
         "fci_sale_val": 0.0,
         "fci_cac_venda": 0.0,
         "fci_prep_venda": 0.0,
         "fci_logistics_venda": 0.0,
-        "fci_total": -asset.purchase_price,
+        "fci_total": -funding,
         "fcf_funding": funding,
         "fcf_captacao_fee": captacao_fee,
         "fcf_juros": 0.0,
@@ -198,14 +200,14 @@ def build_cashflows(
         "dre_ass_manutencao": 0.0,
         "dre_ass_logistica": 0.0,
         "dre_ass_credito_pis": 0.0,
-        "dre_ass_icms": icms_value,
-        "dre_ass_lucro_bruto": -icms_value,
+        "dre_ass_icms": 0.0,
+        "dre_ass_lucro_bruto": 0.0,
         "dre_ass_risk_query": 0.0,
         "dre_ass_cac": 0.0,
         "dre_ass_pdd": 0.0,
         "dre_ass_default": 0.0,
-        "dre_ass_ebitda": -icms_value,
-        "dre_ass_ebit": -icms_value,
+        "dre_ass_ebitda": 0.0,
+        "dre_ass_ebit": 0.0,
         # DRE Venda
         "dre_venda_receita": 0.0,
         "dre_venda_dep_acum": 0.0,
@@ -218,12 +220,12 @@ def build_cashflows(
         "dre_venda_dep_contabil": 0.0,
         "dre_venda_ebit": 0.0,
         # Consolidação DRE
-        "dre_ebit_consolidado": -icms_value,
+        "dre_ebit_consolidado": 0.0,
         "dre_juros": 0.0,
         "dre_mdr": 0.0,
-        "dre_ebt": -icms_value,
-        "dre_ir_csll": -params.ir_csll_pct * (-icms_value),
-        "dre_lucro_liq": -icms_value + (-params.ir_csll_pct * (-icms_value)),
+        "dre_ebt": 0.0,
+        "dre_ir_csll": 0.0,
+        "dre_lucro_liq": 0.0,
     })
 
     # ----------------------------------------------------------
@@ -265,7 +267,7 @@ def build_cashflows(
         # --------------------------------------------------
         # CUSTOS RECORRENTES
         # --------------------------------------------------
-        maintenance_m     = asset.maintenance_monthly if cal_m <= eco_total else 0.0
+        maintenance_m     = (asset.maintenance_monthly * (1.10 ** ((eco_m - 1) // 12))) if cal_m <= eco_total else 0.0
         pdd_m             = price_m * params.pdd_pct
         default_m         = asset.purchase_price * (params.default_pct / 12) if cal_m <= eco_total else 0.0
         logistics_troca_m = logistics_troca_monthly
@@ -435,7 +437,7 @@ def build_cashflows(
         # --------------------------------------------------
         # DFC — Fluxo de Caixa por Natureza
         # IR/CSLL removido do FCO
-        # FCI: sem ICMS (ICMS está no FCO do t=0)
+        # FCI: inclui ICMS no t=0 (classificado como investimento)
         # --------------------------------------------------
         fco_total_m = receita_liq - total_recorrentes - total_pontuais
         fci_total_m = sale_net
@@ -506,6 +508,7 @@ def build_cashflows(
             "ir_fcfe": ir_fcfe,
             "fco_total": fco_total_m,
             "fci_compra": 0.0,
+            "fci_icms": 0.0,
             "fci_sale_val": fci_sale_val_m,
             "fci_cac_venda": fci_cac_venda_m,
             "fci_prep_venda": fci_prep_venda_m,

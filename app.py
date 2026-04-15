@@ -873,7 +873,7 @@ def render_sidebar():
         with st.expander("Parâmetros Avançados", expanded=False):
             st.caption("Fiscal e Tributário")
             icms_pct = st.number_input("ICMS (%)", value=14.0, min_value=0.0, max_value=100.0, step=0.5, format="%.1f") / 100
-            captacao_pct = st.number_input("Custo captação (%)", value=2.0, min_value=0.0, max_value=100.0, step=0.5, format="%.1f") / 100
+            captacao_pct = st.number_input("Custo captação (%)", value=3.0, min_value=0.0, max_value=100.0, step=0.5, format="%.1f") / 100
             juros_aa = st.number_input("Juros a.a. (%)", value=23.72, min_value=0.0, max_value=200.0, step=0.5, format="%.2f") / 100
             pis_cofins = st.number_input("PIS+COFINS (%)", value=9.25, min_value=0.0, max_value=100.0, step=0.25, format="%.2f") / 100
             iss = st.number_input("ISS (%)", value=2.5, min_value=0.0, max_value=100.0, step=0.5, format="%.1f") / 100
@@ -889,7 +889,7 @@ def render_sidebar():
             cac_venda_pct = st.number_input("CAC venda (%)", value=10.0, min_value=0.0, max_value=100.0, step=1.0, format="%.1f") / 100
 
             st.caption("Risco")
-            pdd = st.number_input("PDD (%)", value=8.0, min_value=0.0, max_value=100.0, step=0.5, format="%.1f") / 100
+            pdd = st.number_input("PDD (%)", value=10.0, min_value=0.0, max_value=100.0, step=0.5, format="%.1f") / 100
             default_p = st.number_input("Default mensal (%)", value=3.0, min_value=0.0, max_value=100.0, step=0.1, format="%.2f") / 100
 
             st.caption("Otimização")
@@ -1283,7 +1283,7 @@ def render_tab_premissas(result):
         ("Prazo da dívida", f"{p.prazo_divida_meses} meses", f"Juros até mês {p.prazo_divida_meses}, amortização no mês {p.prazo_divida_meses + 1}"),
         # Custos Operacionais
         ("CUSTOS OPERACIONAIS", "", "", "header"),
-        ("Manutenção", f"{asset.maintenance_annual_pct:.2%} a.a.", f"Sobre purchase_price; mensal = {fmt_brl(asset.maintenance_monthly)}"),
+        ("Manutenção", f"{asset.maintenance_annual_pct:.2%} a.a.", f"Mensal = {fmt_brl(asset.maintenance_monthly)} no Ano 1; +10% a.a. a partir do Ano 2"),
         ("Customer benefits", fmt_brl(p.customer_benefits), "Custo pontual no início de cada contrato/renovação"),
         ("Logística assinatura", fmt_brl(p.logistics_assinatura), "Custo por evento de entrega/devolução"),
         ("Logística AT", f"{p.logistics_at_pct:.0%} a.a.", "Provisão mensal para troca por estrago durante contrato"),
@@ -2083,10 +2083,10 @@ def render_tab_dfc(result):
             ("( - ) Logística entrega", "fco_logistics_ass", "-"),
             ("( - ) Benefícios ao cliente", "fco_customer_benefits", "-"),
             ("( - ) Logística devolução", "fco_logistics_devolucao", "-"),
-            ("( - ) ICMS", "fco_icms", "-"),
             ("= TOTAL FCO", "fco_total", "total"),
             ("FCI — INVESTIMENTO", None, "header"),
             ("( - ) Compra do ativo", "fci_compra", "-"),
+            ("( - ) ICMS (sobre compra)", "fci_icms", "-"),
             ("( + ) Venda bruta do ativo", "fci_sale_val", "+"),
             ("( - ) CAC de venda", "fci_cac_venda", "-"),
             ("( - ) Prep. de venda", "fci_prep_venda", "-"),
@@ -2167,10 +2167,10 @@ def render_tab_dfc(result):
         ("( - ) Log. entrega",           "fco_logistics_ass",   "-"),
         ("( - ) Benef. cliente",         "fco_customer_benefits","-"),
         ("( - ) Log. devolução",         "fco_logistics_devolucao","-"),
-        ("( - ) ICMS",                   "fco_icms",            "-"),
         ("= TOTAL FCO",                  "fco_total",           "total"),
         ("FCI — INVESTIMENTO",           None,                  "header"),
         ("( - ) Compra do ativo",        "fci_compra",          "-"),
+        ("( - ) ICMS (sobre compra)",    "fci_icms",            "-"),
         ("( + ) Venda bruta",            "fci_sale_val",        "+"),
         ("( - ) CAC de venda",           "fci_cac_venda",       "-"),
         ("( - ) Prep. venda",            "fci_prep_venda",      "-"),

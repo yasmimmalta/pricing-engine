@@ -311,7 +311,7 @@ def _compute_annual_cashflows(monthly_details: List[Dict]) -> List[Dict]:
         "fco_cac", "fco_risk_query", "fco_logistics_ass", "fco_customer_benefits",
         "fco_logistics_devolucao", "fco_ir_csll", "fco_icms", "ir_fcff", "ir_fcfe", "fco_total",
         # FCI
-        "fci_compra", "fci_sale_val", "fci_cac_venda", "fci_prep_venda",
+        "fci_compra", "fci_icms", "fci_sale_val", "fci_cac_venda", "fci_prep_venda",
         "fci_logistics_venda", "fci_total",
         # FCF
         "fcf_funding", "fcf_captacao_fee", "fcf_juros", "fcf_principal",
