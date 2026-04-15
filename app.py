@@ -459,7 +459,7 @@ ASSETS_META = os.path.join(
     "pricing_engine", "data", "assets_meta.json"
 )
 
-_COLUNAS_OBRIGATORIAS = {"id", "name", "category", "market_price", "purchase_price", "maintenance_annual_pct"}
+_COLUNAS_OBRIGATORIAS = {"name", "category", "market_price", "purchase_price", "maintenance_annual_pct"}  # 'id' é opcional
 
 COR_AZUL     = "#304D3C"     # Verde escuro Allu (principal)
 COR_VERDE    = "#43A047"     # Verde médio Allu (destaque positivo)
