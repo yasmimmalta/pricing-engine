@@ -951,26 +951,15 @@ def render_sidebar():
                     unsafe_allow_html=True,
                 )
 
-            # Botões de download: base atual e template
-            col_dl1, col_dl2 = st.columns(2)
-            with col_dl1:
-                with open(ASSETS_CSV, "rb") as f_csv:
-                    st.download_button(
-                        "Baixar base atual",
-                        data=f_csv.read(),
-                        file_name="assets.csv",
-                        mime="text/csv",
-                        use_container_width=True,
-                    )
-            with col_dl2:
-                tpl = gerar_template_xlsx()
-                st.download_button(
-                    "Baixar template (.xlsx)",
-                    data=tpl,
-                    file_name="template_ativos.xlsx",
-                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    use_container_width=True,
-                )
+            # Download do template
+            tpl = gerar_template_xlsx()
+            st.download_button(
+                "Baixar template (.xlsx)",
+                data=tpl,
+                file_name="template_ativos.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                use_container_width=True,
+            )
 
             st.divider()
 
