@@ -755,10 +755,12 @@ def render_sidebar():
 
         # Agrupa condições disponíveis por nome de ativo
         # Estrutura: {nome: [(chave, condicao), ...]}
+        tem_id = "id" in df_ativos.columns
         nomes_para_condicoes: dict = {}
         for _, row in df_ativos.iterrows():
             condicao = str(row.get("condicao", "novo")).strip() if "condicao" in df_ativos.columns else "novo"
-            chave = f"{row['id']}|{condicao}"
+            id_ativo = str(row["id"]).strip() if tem_id and not pd.isna(row["id"]) else _gerar_id(str(row["name"]), condicao)
+            chave = f"{id_ativo}|{condicao}"
             nome = str(row["name"])
             nomes_para_condicoes.setdefault(nome, []).append((chave, condicao))
 
