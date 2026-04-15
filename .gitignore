@@ -11,3 +11,4 @@ memory/
 explicacao_tir.py
 gerar_excel.py
 .claude/
+pricing_engine/data/assets_meta.json

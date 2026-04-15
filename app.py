@@ -5,6 +5,7 @@ Interface profissional para cálculo e visualização de preços de assinatura.
 """
 
 import dataclasses
+import json
 import os
 import sys
 import io
@@ -453,6 +454,12 @@ ASSETS_CSV = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "pricing_engine", "data", "assets.csv"
 )
+ASSETS_META = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "pricing_engine", "data", "assets_meta.json"
+)
+
+_COLUNAS_OBRIGATORIAS = {"id", "name", "category", "market_price", "purchase_price", "maintenance_annual_pct"}
 
 COR_AZUL     = "#304D3C"     # Verde escuro Allu (principal)
 COR_VERDE    = "#43A047"     # Verde médio Allu (destaque positivo)
@@ -470,6 +477,54 @@ COR_GAP      = "#FFF3CD"     # Amarelo claro
 def carregar_ativos_csv(filepath: str) -> pd.DataFrame:
     """Carrega o CSV de ativos com cache. Use carregar_ativos_csv.clear() para forçar recarga."""
     return pd.read_csv(filepath, sep=";")
+
+
+def carregar_meta_base() -> dict | None:
+    """Lê o metadata do último upload (nome, data, nº de ativos). Retorna None se nunca houve upload."""
+    if os.path.exists(ASSETS_META):
+        with open(ASSETS_META, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return None
+
+
+def validar_base_csv(df: pd.DataFrame) -> tuple[bool, list[str]]:
+    """Valida um DataFrame de ativos. Retorna (é_válido, lista_de_erros)."""
+    erros = []
+
+    colunas_faltando = _COLUNAS_OBRIGATORIAS - set(df.columns)
+    if colunas_faltando:
+        erros.append(f"Colunas obrigatórias ausentes: {', '.join(sorted(colunas_faltando))}")
+
+    if len(df) == 0:
+        erros.append("A base não pode estar vazia.")
+
+    if erros:
+        return False, erros
+
+    for col in ["market_price", "purchase_price", "maintenance_annual_pct"]:
+        vals = pd.to_numeric(df[col], errors="coerce")
+        if vals.isna().any():
+            erros.append(f"Coluna '{col}' contém valores não numéricos.")
+        elif (vals <= 0).any():
+            erros.append(f"Coluna '{col}' contém valores ≤ 0.")
+
+    ids = df["id"].astype(str).str.strip()
+    if ids.eq("").any() or df["id"].isna().any():
+        erros.append("Coluna 'id' contém valores vazios.")
+
+    return len(erros) == 0, erros
+
+
+def salvar_base_oficial(df: pd.DataFrame, filename: str) -> None:
+    """Grava o DataFrame como nova base oficial e atualiza o metadata."""
+    df.to_csv(ASSETS_CSV, sep=";", index=False)
+    meta = {
+        "filename": filename,
+        "uploaded_at": pd.Timestamp.now().strftime("%d/%m/%Y %H:%M"),
+        "rows": len(df),
+    }
+    with open(ASSETS_META, "w", encoding="utf-8") as f:
+        json.dump(meta, f, ensure_ascii=False, indent=2)
 
 
 def df_para_assets(df: pd.DataFrame) -> dict:
@@ -724,12 +779,94 @@ def render_sidebar():
         # Botão calcular
         calcular = st.button("Calcular Preço", type="primary", use_container_width=True)
 
-        # Botão recarregar base de ativos
-        if st.button("Recarregar base de ativos", use_container_width=True, help="Atualiza a lista de ativos relendo o arquivo assets.csv"):
-            carregar_ativos_csv.clear()
-            st.session_state.resultado = None
-            st.session_state.pop("all_results", None)
-            st.rerun()
+        # --------------------------------------------------
+        # Gerenciar base de ativos
+        # --------------------------------------------------
+        with st.expander("Gerenciar base de ativos", expanded=False):
+            # Informações da base ativa
+            meta = carregar_meta_base()
+            if meta:
+                st.markdown(
+                    f"""
+                    <div style="background:#EFF6EA;border-radius:6px;padding:0.6rem 0.8rem;font-size:0.8rem;margin-bottom:0.5rem;">
+                        <b>Base ativa:</b> {meta['filename']}<br>
+                        <b>Importada em:</b> {meta['uploaded_at']}<br>
+                        <b>Ativos:</b> {meta['rows']} registros
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.markdown(
+                    """
+                    <div style="background:#F2F2F2;border-radius:6px;padding:0.6rem 0.8rem;font-size:0.8rem;margin-bottom:0.5rem;">
+                        <b>Base ativa:</b> padrão do sistema<br>
+                        <span style="color:#6C757D;">Nenhum upload manual realizado.</span>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+            # Baixar base atual
+            with open(ASSETS_CSV, "rb") as f_csv:
+                st.download_button(
+                    "Baixar base atual",
+                    data=f_csv.read(),
+                    file_name="assets.csv",
+                    mime="text/csv",
+                    use_container_width=True,
+                )
+
+            st.divider()
+
+            # Upload de nova base
+            st.caption("Importar nova base")
+            arquivo_upload = st.file_uploader(
+                "Selecione o CSV",
+                type=["csv"],
+                key="upload_assets_csv",
+                label_visibility="collapsed",
+            )
+
+            if arquivo_upload is not None:
+                # Tenta ler com separador ";" ou ","
+                try:
+                    df_novo = pd.read_csv(arquivo_upload, sep=";")
+                    if len(df_novo.columns) == 1:
+                        arquivo_upload.seek(0)
+                        df_novo = pd.read_csv(arquivo_upload, sep=",")
+                except Exception:
+                    df_novo = None
+
+                if df_novo is None:
+                    st.error("Não foi possível ler o arquivo. Verifique o formato.")
+                else:
+                    valido, erros = validar_base_csv(df_novo)
+                    if valido:
+                        st.success(f"Arquivo válido — {len(df_novo)} ativos encontrados")
+                        with st.expander("Preview da nova base"):
+                            st.dataframe(df_novo, use_container_width=True, hide_index=True)
+                        if st.button("Confirmar importação", type="primary", use_container_width=True):
+                            salvar_base_oficial(df_novo, arquivo_upload.name)
+                            carregar_ativos_csv.clear()
+                            st.session_state.resultado = None
+                            st.session_state.pop("all_results", None)
+                            st.success("Base importada com sucesso! Recarregando...")
+                            st.rerun()
+                    else:
+                        st.error("Base inválida — corrija os problemas abaixo:")
+                        for e in erros:
+                            st.write(f"• {e}")
+
+            st.divider()
+
+            # Recarregar base (limpar cache sem novo upload)
+            if st.button("Recarregar base (limpar cache)", use_container_width=True,
+                         help="Relê o arquivo assets.csv do servidor sem fazer novo upload"):
+                carregar_ativos_csv.clear()
+                st.session_state.resultado = None
+                st.session_state.pop("all_results", None)
+                st.rerun()
 
     return {
         "ativo": ativo_sel,
