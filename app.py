@@ -2332,7 +2332,6 @@ def render_tab_dre(result):
         ("( - ) Manutenção", "dre_ass_manutencao", "-"),
         ("( - ) Logística", "dre_ass_logistica", "-"),
         ("( + ) Crédito de PIS/COFINS", "dre_ass_credito_pis", "+"),
-        ("( - ) ICMS", "dre_ass_icms", "-"),
         ("= Lucro bruto", "dre_ass_lucro_bruto", "total"),
         ("DESPESAS", None, "header"),
         ("( - ) Consulta de risco", "dre_ass_risk_query", "-"),
@@ -2449,7 +2448,6 @@ def render_tab_dre(result):
         ("( - ) Manutenção",                         "dre_ass_manutencao",      "-"),
         ("( - ) Logística",                          "dre_ass_logistica",       "-"),
         ("( + ) Crédito PIS/COFINS",                 "dre_ass_credito_pis",     "+"),
-        ("( - ) ICMS",                               "dre_ass_icms",            "-"),
         ("= Lucro bruto",                            "dre_ass_lucro_bruto",     "total"),
         ("( - ) Consulta de risco",                  "dre_ass_risk_query",      "-"),
         ("( - ) CAC",                                "dre_ass_cac",             "-"),
@@ -2622,9 +2620,8 @@ def main():
         unsafe_allow_html=True,
     )
 
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
         "Resultado",
-        "Fluxo de Caixa",
         "Breakdown",
         "DFC — Por Natureza",
         "DRE",
@@ -2635,18 +2632,15 @@ def main():
         render_tab_resultado(result, st.session_state.get("all_results", {}))
 
     with tab2:
-        render_tab_cashflow(result)
-
-    with tab3:
         render_tab_breakdown(result)
 
-    with tab4:
+    with tab3:
         render_tab_dfc(result)
 
-    with tab5:
+    with tab4:
         render_tab_dre(result)
 
-    with tab6:
+    with tab5:
         render_tab_premissas(result)
 
 
